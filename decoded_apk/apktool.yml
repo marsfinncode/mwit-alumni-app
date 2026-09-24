@@ -1,0 +1,77 @@
+version: 2.9.3
+apkFileName: MWITS-offline.apk
+isFrameworkApk: false
+usesFramework:
+  ids:
+  - 1
+  tag: null
+sdkInfo:
+  minSdkVersion: 14
+  targetSdkVersion: 24
+packageInfo:
+  forcedPackageId: 127
+  renameManifestPackage: null
+versionInfo:
+  versionCode: 1118
+  versionName: 1.1.1
+resourcesAreCompressed: false
+sharedLibrary: false
+sparseResources: false
+doNotCompress:
+- resources.arsc
+- png
+- mp4
+- jpg
+- gif
+- assets/www/halloffame-mobile/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.eot
+- assets/www/halloffame-mobile/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff
+- assets/www/halloffame-mobile/bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2
+- assets/www/halloffame-mobile/bower_components/bootstrap/fonts/glyphicons-halflings-regular.eot
+- assets/www/halloffame-mobile/bower_components/bootstrap/fonts/glyphicons-halflings-regular.woff
+- assets/www/halloffame-mobile/bower_components/bootstrap/fonts/glyphicons-halflings-regular.woff2
+- assets/www/halloffame-mobile/bower_components/font-awesome/fonts/fontawesome-webfont.eot
+- assets/www/halloffame-mobile/bower_components/font-awesome/fonts/fontawesome-webfont.woff
+- assets/www/halloffame-mobile/bower_components/font-awesome/fonts/fontawesome-webfont.woff2
+- assets/www/halloffame-mobile/bower_components/jquery-nearest/VERSION.txt
+- assets/www/halloffame-mobile/bower_components/jquery/src/outro.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/selector.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/ajax/var/location.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/ajax/var/rquery.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/core/var/rsingleTag.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/css/var/cssExpand.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/css/var/rmargin.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/css/var/rnumnonpx.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/manipulation/var/rcheckableType.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/manipulation/var/rleadingWhitespace.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/manipulation/var/rscriptType.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/manipulation/var/rtagName.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/arr.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/class2type.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/concat.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/deletedIds.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/document.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/indexOf.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/pnum.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/push.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/rcssNum.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/rnotwhite.js
+- assets/www/halloffame-mobile/bower_components/jquery/src/var/slice.js
+- assets/www/halloffame-mobile/css/effect-new-than.css
+- assets/www/halloffame-mobile/fonts/itim/itim-regular-webfont.woff
+- assets/www/halloffame-mobile/fonts/itim/itim-regular-webfont.woff2
+- assets/www/mindmap/dan-font/th_dan_vi_vek_ver_1.03-webfont.eot
+- assets/www/mindmap/dan-font/th_dan_vi_vek_ver_1.03-webfont.woff
+- assets/www/mindmap/dan-font/th_dan_vi_vek_ver_1.03-webfont.woff2
+- assets/www/mindmap/font-awesome-4.5.0/fonts/fontawesome-webfont.eot
+- assets/www/mindmap/font-awesome-4.5.0/fonts/fontawesome-webfont.woff
+- assets/www/mindmap/font-awesome-4.5.0/fonts/fontawesome-webfont.woff2
+- assets/www/mindmap/fonts/th_charm_of_au-webfont.woff
+- assets/www/mindmap/quark/quark-bold-webfont.eot
+- assets/www/mindmap/quark/quark-bold-webfont.woff
+- assets/www/mindmap/quark/quark-bold-webfont.woff2
+- assets/www/mindmap/quark/quark-light-webfont.eot
+- assets/www/mindmap/quark/quark-light-webfont.woff
+- assets/www/mindmap/quark/quark-light-webfont.woff2
+- assets/www/mindmap/web/thaisanslite_r1-webfont.eot
+- assets/www/mindmap/web/thaisanslite_r1-webfont.woff
+- assets/www/mindmap/web/thaisanslite_r1-webfont.woff2

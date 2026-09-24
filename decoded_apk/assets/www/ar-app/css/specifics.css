@@ -1,0 +1,1491 @@
+/*
+
+NORMAL (881px and over)
+When the browser window is normal size and over.
+
+*/
+@media screen and (min-width:1024px) {
+	html {
+		font-size:62.5%;
+	}
+	
+	body {
+		background-attachment:fixed;
+		background-position-x:230px;
+	}
+	
+	.noscript-warning {
+		margin-bottom:-52px;
+		margin-left:220px;
+		padding:67px 15px 15px 15px;
+	}
+	
+	.small-window {
+		display:none;
+	}
+	
+	.fa:before {
+		margin-right:5px;
+	}
+	
+	.right {
+		float:right;
+	}
+	
+	.left {
+		float:left;
+	}
+	
+	.cols {
+		margin: 0 -20px;
+	}
+	
+	.inner-cols {
+		margin:0 -10px;
+	}
+	
+	/* ---------------------------------------- MAIN MENU & LOGO ---------------------------------------- */
+	nav#big {
+		display:block;
+	}
+	
+	nav#small {
+		display:none;
+	}
+	
+	#menu {
+		height:100%;
+		padding: 52px 0 10px 0;
+		width:220px;
+	}
+	
+	#menu ul a {
+		padding:15px;
+	}
+
+	#menu ul li.cat {
+		margin:20px 0 0 0;
+		padding:15px;
+	}
+	
+	#menu .fa {
+		display: inline-block;
+		height: 19px;
+		width: 20px;
+	}
+	
+	#menu .fa:before {
+		margin-right:5px!important;
+	}
+	
+	#menu ul ul {
+		left:229px; /* Same width as menu minus 1 */
+		top:0;
+	}
+	
+	#menu li li a {
+		padding:20px 15px;
+		width:270px;
+	}
+	
+	#menu li li a:hover {
+		padding-left:25px;
+	}
+	
+	#top-menu {
+		position: fixed;
+	}
+	
+	#top-menu .nav-links {
+		display: block;
+	}
+	
+	#top-menu .nav-links > ul > li > a {
+		padding: 16px 10px;
+	}
+	
+	/* ---------------------------------------- END MAIN MENU ---------------------------------------- */
+	/* ---------------------------------------- MAIN CONTENT AREA ---------------------------------------- */
+	a.contact {
+		padding:15px;
+	}
+	
+	.breadcrumb {
+		display:table;
+		height:67px;
+		padding:5px 25px 5px 255px;
+		position:fixed;
+		width:100%;
+	}
+	
+	.breadcrumb > div {
+		display:table-cell;
+		vertical-align:middle;
+	}
+	
+	.breadcrumb a {
+		margin:0 3px;
+		padding:6px 10px;
+	}
+	
+	.like-buttons {
+		margin: 16px 0 13px 0;
+		text-align: right;
+	}
+	
+	.selector {
+		margin-bottom:-90px;
+	}
+	
+	#search-input {
+		font-size:16px;
+		margin:30px auto 10px;
+		padding:10px;
+		width:500px;
+	}
+	
+	#livesearch {
+		margin:-10px auto 10px;
+		width:500px;
+	}
+	
+	#livesearch a, #livesearch span {
+		padding:8px 10px;
+	}
+	
+	.container {
+		padding:35px 25px;
+	}
+	
+	.neg-marg {
+		margin:0 -15px;
+	}
+	
+	div.tall {
+		padding:30px 0;
+	}
+	
+	.container section:first-of-type {
+		padding-top:0;
+	}
+	
+	section.main, aside.main-ad {
+		margin-left:220px;
+		padding-top:52px;
+	}
+	
+	.one-fifth {
+		width:20%;
+	}
+	
+	.four-fifth {
+		padding-left:40px;
+		width:80%;
+	}
+	
+	#header {
+		padding:30px;
+	}
+	
+	#main-ad, #browser-support {
+		padding: 15px 30px;
+	}
+	
+	h1 {
+		padding:12px 0;
+	}
+	
+	h2, p.heading {
+		margin-bottom:30px;
+	}
+	
+	h2.subtitle {
+		margin-bottom:10px;
+	}
+	
+	h3 {
+		margin:30px 0;
+	}
+	
+	h4 {
+		margin-bottom:10px;
+	}
+	
+	.half {
+		padding:0 20px;
+		width:50%;
+	}
+	
+	.inner-half {
+		padding:12px 10px 0 10px;
+		width:50%;
+	}
+	
+	.inner-half:nth-child(-n+2) {
+		padding-top: 0;
+	}
+	
+	.inner-full {
+		padding:12px 10px 0 10px;
+	}
+	
+	.inner-full:first-child {
+		padding-top:0;
+	}
+	
+	ol,ul,p {
+		margin-bottom:20px;
+	}
+	
+	pre + p {
+		margin-top:20px;
+	}
+	
+	hr {
+		margin:44px 0;
+	}
+	
+	.button, input:not(.nostyle)[type="submit"] {
+		padding:12px 20px;
+	}
+	
+	.selector .button {
+		margin-top:15px;
+	}
+	
+	.button:nth-of-type(2) {
+		margin-left:18px;
+	}
+	
+	.box {
+		display:inline-block;
+		width:33.333%;
+	}
+	
+	.box .inner-box {
+		height:390px;
+		padding:25px;
+	}
+	
+	.box a.button {
+		padding:18px 25px;
+	}
+	
+	.dashboard-btn {
+		width: 33.333%;
+	}
+	
+	.list {
+		margin:-1px -3px;
+	}
+	
+	.list li {
+		padding:1px 3px;
+		width:33.333%;
+	}
+	
+	.list li:nth-child(n + 4) {
+		margin-top:5px;
+	}
+	
+	.list li a {
+		padding:14px 16px;
+	}
+	
+	mark {
+		padding:15px;
+	}
+	
+	/* Form elements */
+	label {
+		padding-bottom:4px;
+	}
+	
+	input + label {
+		padding-left:3px;
+	}
+	
+	br + label, br + .conditional > label {
+		padding-top:12px;
+	}
+	
+	input + br + p,select + br + p,textarea + br + p {
+		margin-top:20px;
+	}
+	
+	input:not(.nostyle)[type="submit"] {
+		margin-top:10px;
+	}
+	
+	.generators {
+		display:table;
+		table-layout:fixed;
+		width:100%;
+	}
+	
+	.generator-section {
+		display:table-cell;
+		padding:0 15px;
+		vertical-align:top;
+		width:33.333%;
+	}
+	
+	select:not(.nostyle), input:not(.nostyle)[type="text"], input:not(.nostyle)[type="email"], input:not(.nostyle)[type="tel"], input:not(.nostyle)[type="url"], input:not(.nostyle)[type="date"], input:not(.nostyle)[type="time"], input:not(.nostyle)[type="number"], input:not(.nostyle)[type="range"], textarea:not(.nostyle) {
+		border-radius:2px;
+		padding:8px;
+		width:100%;
+	}
+	
+	select:not(.nostyle) {
+		background: #fff url("../images/select-arrow.png") no-repeat center right 10px;
+	}
+	
+	select.main {
+		padding:12px;
+	}
+	
+	select {
+		width:100%!important;
+	}
+	
+	.previewWindow {
+		height:300px;
+	}
+	
+	.previewWindow + p {
+		margin-top:10px;
+	}
+	
+	.animationWin {
+		height:50px;
+		width:50px;
+	}
+	
+	.code {
+		margin-bottom:20px;
+		padding:10px;
+	}
+	
+	#caption {
+		margin-bottom:20px;
+	}
+	
+	#social {
+		bottom:15px;
+		display:block;
+		padding:20px 30px;
+		right:15px;
+	}
+	
+	#social span.close {
+		margin:-20px -25px;
+	}
+	
+	#news-feed .post .publish-date,#news-feed .post .description {
+		padding-top:30px;
+	}
+	
+	#news-feed .post:first-of-type .publish-date,#news-feed .post:first-of-type .description {
+		padding-top:0!important;
+	}
+	
+	#news-feed .publish-date {
+		display:table-cell;
+	}
+	
+	#news-feed .publish-date span {
+		margin-right:20px;
+		padding:20px;
+	}
+	
+	/* ---------------------------------------- END MAIN CONTENT AREA ---------------------------------------- */
+	/* ---------------------------------------- FOOTER AREA ---------------------------------------- */
+	footer {
+		margin-left:220px;
+		padding:40px 30px;
+	}
+	
+	/* ---------------------------------------- END FOOTER AREA ---------------------------------------- */
+	/* ---------------------------------------- OVERRIDE ---------------------------------------- */
+	div#fb.fb-like.fb_iframe_widget {
+		margin-right:8px!important;
+	}
+	
+	iframe#twitter-widget-0.twitter-share-button.twitter-tweet-button.twitter-count-vertical {
+		margin-right:8px!important;
+	}/* ---------------------------------------- END OVERRIDEF---------------------------------------- */
+	
+}
+
+/*
+
+SMALL (714px to 880px)
+When the browser window is big enough but smaller. Basically, everything becomes a little smaller to fit in the window.
+
+*/
+@media screen and (min-width:714px) and (max-width:1023px) {
+	html {
+		font-size:60%;
+	}
+	
+	body {
+		background-attachment:fixed;
+		background-position-x:180px;
+	}
+	
+	.noscript-warning {
+		margin-bottom:-52px;
+		margin-left:180px;
+		padding:67px 15px 15px 15px;
+	}
+	
+	.small-window {
+		display:none;
+	}
+	
+	.fa:before {
+		margin-right:5px;
+	}
+	
+	.right {
+		float:right;
+	}
+	
+	.left {
+		float:left;
+	}
+	
+	.cols {
+		margin: 0 -20px;
+	}
+	
+	.inner-cols {
+		margin:0 -10px;
+	}
+	
+	/* ---------------------------------------- MAIN MENU & LOGO ---------------------------------------- */
+	nav#big {
+		display:block;
+	}
+	
+	nav#small {
+		display:none;
+	}
+	
+	#menu {
+		height:100%;
+		padding: 52px 0 10px 0;
+		width:180px;
+	}
+	
+	#menu ul a {
+		padding:15px;
+	}
+	
+	#menu ul li.cat {
+		margin:20px 0 0 0;
+		padding:15px;
+	}
+	
+	#menu .fa:before {
+		display:none!important;
+	}
+	
+	#menu ul ul {
+		top:0;
+		left:179px;
+	}
+	
+	#menu li li a {
+		padding:20px 10px;
+		width:230px;
+	}
+	
+	#menu li li a:hover {
+		padding-left:20px;
+	}
+	
+	#top-menu {
+		position: fixed;
+	}
+	
+	#top-menu .nav-links {
+		display: block;
+	}
+	
+	#top-menu .nav-links > ul > li > a {
+		padding: 17px 10px 16px 10px;
+	}
+	
+	/* ---------------------------------------- END MAIN MENU ---------------------------------------- */
+	/* ---------------------------------------- MAIN CONTENT AREA ---------------------------------------- */
+	a.contact {
+		padding:15px;
+	}
+	
+	.breadcrumb {
+		display:table;
+		height:67px;
+		padding:5px 20px 5px 200px;
+		width:100%;
+	}
+	
+	.breadcrumb > div {
+		display:table-cell;
+		vertical-align:middle;
+	}
+	
+	.breadcrumb a {
+		margin:0 3px;
+		padding:6px 8px;
+	}
+	
+	.like-buttons {
+		margin: 16px 0 12px 3px;
+	}
+	
+	#search-input {
+		font-size:16px;
+		margin:30px auto 10px;
+		padding:10px;
+		width:400px;
+	}
+	
+	#livesearch {
+		margin:-10px auto 10px;
+		width:400px;
+	}
+	
+	#livesearch a, #livesearch span {
+		padding:8px 10px;
+	}
+	
+	.container {
+		padding:30px 25px;
+	}
+	
+	.neg-marg {
+		margin:0 -15px;
+	}
+	
+	div.tall {
+		padding:30px 0;
+	}
+	
+	.container section:first-of-type {
+		padding-top:0;
+	}
+	
+	section.main, aside.main-ad {
+		margin-left:180px;
+		padding-top:52px;
+	}
+	
+	.one-fifth {
+		width:20%;
+	}
+	
+	.four-fifth {
+		padding-left:30px;
+		width:80%;
+	}
+	
+	#header {
+		padding:30px;
+	}
+	
+	#main-ad, #browser-support {
+		padding: 15px 30px;
+	}
+	
+	h1 {
+		
+	}
+	
+	h2, p.heading {
+		margin-bottom:30px;
+	}
+	
+	h2.subtitle {
+		margin-bottom:10px;
+	}
+	
+	h3 {
+		margin:30px 0;
+	}
+	
+	h4 {
+		margin-bottom:10px;
+	}
+	
+	.half {
+		padding:0 20px;
+		width:50%;
+	}
+	
+	.inner-half {
+		padding:12px 10px 0 10px;
+		width:50%;
+	}
+	
+	.inner-half:nth-child(-n+2) {
+		padding-top: 0;
+	}
+	
+	.inner-full {
+		padding:12px 10px 0 10px;
+	}
+	
+	.inner-full:first-child {
+		padding-top:0;
+	}
+	
+	ol,ul,p {
+		margin-bottom:20px;
+	}
+	
+	pre + p {
+		margin-top:20px;
+	}
+	
+	hr {
+		margin:25px 0;
+	}
+	
+	.button, input:not(.nostyle)[type="submit"] {
+		padding:12px 20px;
+	}
+	
+	.selector .button {
+		margin-top:15px;
+	}
+	
+	.button:nth-of-type(2) {
+		margin-left:18px;
+	}
+	
+	.box {
+		display:inline-block;
+		width:50%;
+	}
+	
+	.box .inner-box {
+		height:380px;
+		padding:25px;
+	}
+	
+	.box a.button {
+		padding:18px 25px;
+	}
+	
+	.dashboard-btn {
+		width: 33.333%;
+	}
+	
+	.list li {
+		width:100%;
+	}
+	
+	.list li:nth-child(n + 2) {
+		margin-top:5px;
+	}
+	
+	.list li a {
+		padding:12px 14px;
+	}
+	
+	mark {
+		padding:15px;
+	}
+	
+	/* Form elements */
+	label {
+		padding-bottom:10px;
+	}
+	
+	input + label {
+		padding-left:3px;
+	}
+	
+	br + label, br + .conditional > label {
+		padding-top:16px;
+	}
+	
+	input + br + p,select + br + p,textarea + br + p {
+		margin-top:20px;
+	}
+	
+	input:not(.nostyle)[type="submit"] {
+		margin-top:10px;
+	}
+	
+	.generators {
+		display:table;
+		table-layout:fixed;
+		width:100%;
+	}
+	
+	.generator-section {
+		display:table-cell;
+		padding:0 15px;
+		vertical-align:top;
+		width:33.333%;
+	}
+	
+	select:not(.nostyle), input:not(.nostyle)[type="text"], input:not(.nostyle)[type="email"], input:not(.nostyle)[type="tel"], input:not(.nostyle)[type="url"], input:not(.nostyle)[type="date"], input:not(.nostyle)[type="time"], input:not(.nostyle)[type="number"], input:not(.nostyle)[type="range"], textarea:not(.nostyle) {
+		border-radius:2px;
+		padding:8px;
+		width:100%;
+	}
+	
+	select:not(.nostyle) {
+		background: #fff url("../images/select-arrow.png") no-repeat center right 10px;
+	}
+	
+	select.main {
+		padding:12px;
+	}
+	
+	select {
+		width:100%!important;
+	}
+	
+	.previewWindow {
+		height:300px;
+	}
+	
+	.previewWindow + p {
+		margin-top:10px;
+	}
+	
+	.animationWin {
+		height:50px;
+		width:50px;
+	}
+	
+	.code {
+		margin-bottom:20px;
+		padding:10px;
+	}
+	
+	#caption {
+		margin-bottom:20px;
+	}
+	
+	#social {
+		bottom:10px;
+		display:block;
+		padding:20px 30px;
+		right:10px;
+	}
+	
+	#social span.close {
+		margin:-20px -25px;
+	}
+	
+	#news-feed .post .publish-date,#news-feed .post .description {
+		padding-top:30px;
+	}
+	
+	#news-feed .post:first-of-type .publish-date,#news-feed .post:first-of-type .description {
+		padding-top:0!important;
+	}
+	
+	#news-feed .publish-date {
+		display:table-cell;
+	}
+	
+	#news-feed .publish-date span {
+		margin-right:20px;
+		padding:20px;
+	}
+	
+	/* ---------------------------------------- END MAIN CONTENT AREA ---------------------------------------- */
+	/* ---------------------------------------- FOOTER AREA ---------------------------------------- */
+	footer {
+		margin-left:180px;
+		padding:40px 30px;
+	}/* ---------------------------------------- END FOOTER AREA ---------------------------------------- */
+	
+}
+
+/*
+
+SMALLER (522px to 713px)
+Close to mobile layout, but the elements and fonts are a little bigger.
+
+*/
+@media screen and (min-width:522px) and (max-width:713px) {
+	html {
+		font-size:55%;
+	}
+	
+	.noscript-warning {
+		padding:15px;
+	}
+	
+	.small-window {
+		display:block;
+	}
+	
+	.fa:before {
+		margin-right:5px;
+	}
+	
+	.cols {
+		margin: 0;
+	}
+	
+	.inner-cols {
+		margin:0;
+	}
+	
+	/* ---------------------------------------- MAIN MENU & LOGO ---------------------------------------- */
+	nav#big {
+		display:none;
+	}
+	
+	nav#small {
+		display:block;
+		padding:20px;
+	}
+	
+	nav#small select {
+		margin:auto;
+		width:350px!important;
+	}
+	
+	#menu {
+		position:relative;
+		text-align:center;
+	}
+	
+	#menu ul {
+		padding:0 30px;
+	}
+	
+	#menu ul a {
+		padding:15px;
+	}
+	
+	#menu .fa:before {
+		display:none!important;
+	}
+	
+	#top-menu {
+		position: relative;
+	}
+	
+	#top-menu .nav-links {
+		display: none;
+	}
+	
+	#top-menu .nav-links > ul > li > a {
+		padding: 16px 10px;
+	}
+	
+	.right {
+	}
+	
+	.left {
+	}
+	
+	/* ---------------------------------------- END MAIN MENU ---------------------------------------- */
+	/* ---------------------------------------- MAIN CONTENT AREA ---------------------------------------- */
+	a.contact {
+		padding:10px;
+	}
+	
+	.breadcrumb {
+		display:block;
+		padding:10px 30px;
+	}
+	
+	.breadcrumb a {
+		margin:10px 3px;
+		padding:9px 8px;
+	}
+	
+	.like-buttons {
+		margin: 16px 0 12px 3px;
+	}
+	
+	#search-input {
+		font-size:16px;
+		margin:30px auto 10px;
+		padding:10px;
+		width:430px;
+	}
+	
+	#livesearch {
+		margin:-10px auto 10px;
+		width:430px;
+	}
+	
+	#livesearch a, #livesearch span {
+		padding:8px 10px;
+	}
+	
+	.container {
+		padding:30px 25px;
+	}
+	
+	div.tall {
+		padding:20px 0;
+	}
+	
+	.container section:first-of-type {
+		padding-top:0;
+	}
+	
+	.one-fifth {
+		padding-bottom:30px;
+		margin:0 auto;
+		width:100%;
+	}
+	
+	.four-fifth {
+		width:100%;
+	}
+	
+	#header {
+		padding:30px;
+	}
+	
+	#main-ad, #browser-support {
+		padding: 15px 30px;
+	}
+	
+	h1 {
+		
+	}
+	
+	h2, p.heading {
+		margin-bottom:20px;
+	}
+	
+	h2.subtitle {
+		margin-bottom:10px;
+	}
+	
+	h3 {
+		margin:30px 0;
+	}
+	
+	h4 {
+		margin-bottom:10px;
+	}
+	
+	.half {
+		width:100%;
+	}
+	
+	.half:nth-of-type(2) {
+		margin-top:20px;
+	}
+	
+	.inner-half {
+		padding-top: 16px;
+		width:100%;
+	}
+	
+	.inner-half:nth-child(-n+2) {
+		padding-top: 0;
+	}
+	
+	.inner-full {
+		padding-top:16px;
+	}
+	
+	.inner-full:first-child {
+		padding-top:0;
+	}
+	
+	ol,ul,p {
+		margin-bottom:20px;
+	}
+	
+	pre + p {
+		margin-top:20px;
+	}
+	
+	hr {
+		margin:25px 0;
+	}
+	
+	.button, input:not(.nostyle)[type="submit"] {
+		padding:10px 18px;
+	}
+	
+	.selector .button {
+		margin-top:10px;
+	}
+	
+	.button:nth-of-type(2) {
+		margin-left:12px;
+	}
+	
+	.box {
+		display:table;
+		width:100%;
+	}
+	
+	.box .inner-box {
+		padding:25px;
+	}
+	
+	.box a.button {
+		padding:16px 23px;
+	}
+	
+	.dashboard-btn {
+		width: 50%;
+	}
+	
+	.list li {
+		width:100%;
+	}
+	
+	.list li:nth-child(n + 2) {
+		margin-top:4px;
+	}
+	
+	.list li a {
+		padding:12px 14px;
+	}
+	
+	mark {
+		padding:15px;
+	}
+	
+	/* Form elements */
+	label {
+		padding-bottom:12px;
+	}
+	
+	input + label {
+		padding-left:3px;
+	}
+	
+	br + label, br + .conditional > label {
+		padding-top:16px;
+	}
+	
+	input + br + p,select + br + p,textarea + br + p {
+		margin-top:20px;
+	}
+	
+	input:not(.nostyle)[type="submit"] {
+		margin-top:10px;
+	}
+	
+	.generator-section {
+		width:100%;
+	}
+	
+	.generator-section + .generator-section {
+		margin-top:20px;
+	}
+	
+	select:not(.nostyle), input:not(.nostyle)[type="text"], input:not(.nostyle)[type="email"], input:not(.nostyle)[type="tel"], input:not(.nostyle)[type="url"], input:not(.nostyle)[type="date"], input:not(.nostyle)[type="time"], input:not(.nostyle)[type="number"], input:not(.nostyle)[type="range"], textarea:not(.nostyle) {
+		border-radius:2px;
+		padding:8px;
+		width:100%;
+	}
+	
+	select:not(.nostyle) {
+		background: #fff url("../images/select-arrow.png") no-repeat center right 10px;
+	}
+	
+	select.main {
+		padding:12px;
+		width:100%!important;
+	}
+	
+	select {
+		width:100%!important;
+	}
+	
+	.previewWindow {
+		height:300px;
+	}
+	
+	.previewWindow + p {
+		margin-top:10px;
+	}
+	
+	.animationWin {
+		height:50px;
+		width:50px;
+	}
+	
+	.code {
+		margin-bottom:20px;
+		padding:10px;
+	}
+	
+	#caption {
+		margin-bottom:20px;
+	}
+	
+	#social {
+		bottom:10px;
+		display:block;
+		padding:20px 30px;
+		right:10px;
+	}
+	
+	#social span.close {
+		margin:-20px -25px;
+	}
+	
+	#news-feed .post .publish-date,#news-feed .post .description {
+		padding-top:20px;
+	}
+	
+	#news-feed .post:first-of-type .publish-date,#news-feed .post:first-of-type .description {
+		padding-top:0!important;
+	}
+	
+	#news-feed .publish-date {
+		display:none;
+	}
+	
+	/* ---------------------------------------- END MAIN CONTENT AREA ---------------------------------------- */
+	/* ---------------------------------------- FOOTER AREA ---------------------------------------- */
+	footer {
+		padding:40px 30px;
+	}/* ---------------------------------------- END FOOTER AREA ---------------------------------------- */
+	
+}
+
+/*
+
+MOBILE (521px and under)
+Mobile view, or very small browser window.
+
+*/
+@media screen and (max-width:521px) {
+	html {
+		font-size:46%;
+	}
+	
+	.noscript-warning {
+		padding:15px;
+	}
+	
+	.small-window {
+		display:block;
+	}
+	
+	.fa:before {
+		margin-right:5px;
+	}
+	
+	.right {
+		
+	}
+	
+	.left {
+		
+	}
+	
+	.cols {
+		margin: 0;
+	}
+	
+	.inner-cols {
+		margin:0;
+	}
+	
+	/* ---------------------------------------- MAIN MENU ---------------------------------------- */
+	nav#big {
+		display:none;
+	}
+	
+	nav#small {
+		display:block;
+		padding:15px 20px;
+	}
+	
+	nav#small select {
+		margin:auto;
+		width:100%!important;
+	}
+	
+	#menu {
+		position:relative;
+		text-align:center;
+	}
+	
+	#menu ul {
+		padding:0 20px;
+	}
+	
+	#menu ul a {
+		padding:15px;
+	}
+	
+	#menu .fa:before {
+		display:none!important;
+	}
+	
+	#top-menu {
+		position: relative;
+	}
+	
+	#top-menu .nav-links {
+		display: none;
+	}
+	
+	#top-menu .nav-links > ul > li > a {
+		padding: 16px 10px;
+	}
+	
+	/* ---------------------------------------- END MAIN MENU ---------------------------------------- */
+	/* ---------------------------------------- MAIN CONTENT AREA ---------------------------------------- */
+	a.contact {
+		padding:8px;
+	}
+	
+	.breadcrumb {
+		display:none!important;
+	}
+	
+	#search-input, #livesearch, #livesearch a, #livesearch span {
+		display:none !important;
+	}
+	
+	.container {
+		padding:25px;
+	}
+	
+	div.tall {
+		padding:20px 0;
+	}
+	
+	.container section:first-of-type {
+		padding-top:0;
+	}
+	
+	.one-fifth {
+		padding-bottom:30px;
+		margin:0 auto;
+		width:100%;
+	}
+	
+	.four-fifth {
+		width:100%;
+	}
+	
+	#header {
+		padding:30px;
+	}
+	
+	#main-ad {
+		padding: 10px 30px;
+	}
+	
+	#browser-support {
+		display:none;
+	}
+	
+	h1 {
+		
+	}
+	
+	h2, p.heading {
+		margin-bottom:20px;
+	}
+	
+	h2.subtitle {
+		margin-bottom:10px;
+	}
+	
+	h3 {
+		margin:30px 0;
+	}
+	
+	h4 {
+		margin-bottom:10px;
+	}
+	
+	.half {
+		width:100%;
+	}
+	
+	.half:nth-of-type(2) {
+		margin-top:20px;
+	}
+	
+	.inner-half {
+		padding-top: 16px;
+		width:100%;
+	}
+	
+	.inner-half:nth-child(-n+2) {
+		padding-top: 0;
+	}
+	
+	.inner-full {
+		padding-top:16px;
+	}
+	
+	.inner-full:first-child {
+		padding-top:0;
+	}
+	
+	ol,ul,p {
+		margin-bottom:20px;
+	}
+	
+	pre + p {
+		margin-top:20px;
+	}
+	
+	hr {
+		margin:25px 0;
+	}
+	
+	.button, input:not(.nostyle)[type="submit"] {
+		padding:10px 18px;
+	}
+	
+	.box {
+		display:table;
+		width:100%;
+	}
+	
+	.box .inner-box {
+		padding:25px;
+	}
+	
+	.dashboard-btn {
+		width: 100%;
+	}
+	
+	.dashboard-btn .img {
+		width: 33.333%;
+	}
+	
+	.selector .button {
+		margin-top:10px;
+	}
+	
+	.button:nth-of-type(2) {
+		margin-left:12px;
+	}
+	
+	.list li {
+		width:100%;
+	}
+	
+	.list li:nth-child(n + 2) {
+		margin-top:3px;
+	}
+	
+	.list li a {
+		padding:10px 12px;
+	}
+	
+	/* Form elements */
+	label {
+		padding-bottom:10px;
+	}
+	
+	input + label {
+		padding-left:3px;
+	}
+	
+	br + label, br + .conditional > label{
+		padding-top:16px;
+	}
+	
+	input + br + p,select + br + p,textarea + br + p {
+		margin-top:20px;
+	}
+	
+	select + br + input {
+		margin-top:3px;
+	}
+	
+	input:not(.nostyle)[type="submit"] {
+		margin-top:10px;
+	}
+	
+	.generator-section {
+		width:100%;
+	}
+	
+	.generator-section + .generator-section {
+		margin-top:20px;
+	}
+	
+	select:not(.nostyle), input:not(.nostyle)[type="text"], input:not(.nostyle)[type="email"], input:not(.nostyle)[type="tel"], input:not(.nostyle)[type="url"], input:not(.nostyle)[type="date"], input:not(.nostyle)[type="time"], input:not(.nostyle)[type="number"], input:not(.nostyle)[type="range"], textarea:not(.nostyle) {
+		border-radius:2px;
+		padding:8px;
+		width:100%;
+	}
+	
+	select:not(.nostyle) {
+		background: #fff url("../images/select-arrow.png") no-repeat center right 10px;
+	}
+	
+	select.main {
+		padding:12px;
+		width:100%!important;
+	}
+	
+	select {
+		width:100%!important;
+	}
+	
+	.previewWindow {
+		min-height:80px;
+	}
+	
+	.previewWindow + p {
+		margin-top:10px;
+	}
+	
+	.animationWin {
+		height:50px;
+		width:50px;
+	}
+	
+	.code {
+		margin-bottom:20px;
+		padding:10px;
+	}
+	
+	#caption {
+		margin-bottom:20px;
+	}
+	
+	#social {
+		display:none;
+	}
+	
+	#social span.close {
+		display:none;
+	}
+	
+	#news-feed .post .publish-date,#news-feed .post .description {
+		padding-top:20px;
+	}
+	
+	#news-feed .post:first-of-type .publish-date,#news-feed .post:first-of-type .description {
+		padding-top:0!important;
+	}
+	
+	#news-feed .publish-date {
+		display:none;
+	}
+	
+	/* ---------------------------------------- END MAIN CONTENT AREA ---------------------------------------- */
+	/* ---------------------------------------- FOOTER AREA ---------------------------------------- */
+	footer {
+		padding:40px 30px;
+	}/* ---------------------------------------- END FOOTER AREA ---------------------------------------- */
+	
+}

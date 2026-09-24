@@ -1,0 +1,34 @@
+*{
+	margin:0;
+	padding:0;
+}
+
+svg{
+	background:url(../images/bg.jpg);
+	display:block;
+	//margin:1em auto;
+	background-size: 100%;
+}
+
+.link{
+	fill: none;
+	stroke: #e1f5fe;
+	stroke-width: 2;
+}  
+
+
+circle{
+	cursor:move;
+}
+
+.size100{
+	fill: #0F0;
+}
+
+.size40{
+	fill: #666;
+}
+
+.size28{
+	fill: #33C;
+}

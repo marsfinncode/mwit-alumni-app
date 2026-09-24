@@ -1,0 +1,167 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta name="viewport" content="user-scalable=no, width=768px">
+    <meta charset="utf-8">
+    <title>Hall of Fame</title>
+    <style>
+        * {
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        @font-face {
+            font-family: 'Itim';
+            src: url('fonts/Itim/itim-regular-webfont.eot');
+            src: url('fonts/Itim/itim-regular-webfont.eot?#iefix') format('embedded-opentype'),
+            url('fonts/Itim/itim-regular-webfont.woff2') format('woff2'),
+            url('fonts/Itim/itim-regular-webfont.woff') format('woff'),
+            url('fonts/Itim/itim-regular-webfont.ttf') format('truetype'),
+            url('fonts/Itim/itim-regular-webfont.svg#itimregular') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .ui-keyboard {
+            display: none;
+        }
+
+        #back-home {
+            position: absolute;
+            top: 25px;
+            height: 4%;
+            left: 1%;
+            z-index: 999999999;
+        }
+
+        #keyboard1 {
+            z-index: 999999999;
+        }
+
+        .grid-closing {
+            position: relative;
+            z-index: 50;
+        }
+
+        .grid-closing:before {
+            position: absolute;
+            content: '';
+            top: -20px;
+            right: -20px;
+            left: -20px;
+            bottom: -20px;
+            z-index: 40;
+        }
+
+        .search-type-display {
+            position: relative;
+            z-index: 50;
+            width: 12%;
+            height: 50px;
+            float: left;
+        }
+
+        .search-type-display:before {
+            position: absolute;
+            content: '';
+            top: -20px;
+            right: -20px;
+            left: -20px;
+            bottom: -20px;
+            z-index: 40;
+        }
+
+        .arrow-right:before {
+            position: absolute;
+            content: '';
+            top: -20px;
+            right: -20px;
+            left: -20px;
+            bottom: -20px;
+            z-index: 40;
+        }
+    </style>
+    <link rel="stylesheet" href="bower_components/normalize-css/normalize.css">
+    <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
+    <link rel="stylesheet" href="bower_components/jquery-ui/dist/jquery-ui.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="bower_components/magic/magic.css">
+    <link rel="stylesheet" href="bower_components/animate.css/animate.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+<a href="../index-2.html"><img src="images/back-home.png" id="back-home"></a>
+<div id="showcase" class="grid-selector"></div>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="plugins/jquery-mobile/jquery.mobile.custom.js"></script>
+<script src="bower_components/d3/d3.js" charset="utf-8"></script>
+<script src="bower_components/jquery-ui/dist/jquery-ui.js"></script>
+<script src="bower_components/jquery-nearest/src/jquery.nearest.js"></script>
+<script src="bower_components/jquery-overlaps/jquery.overlaps.js"></script>
+<script src="bower_components/hammerjs/hammer.js"></script>
+<script src="bower_components/interact/interact.js"></script>
+<script src="bower_components/velocity/velocity.js"></script>
+<script src="bower_components/underscore/underscore.js"></script>
+<script src="offline-index.js"></script>
+<script src="offline-meta.js"></script>
+<script src="offline-shim.js"></script>
+<script src="offline-browse.js"></script>
+<script src="js/effect-main.js"></script>
+<script src="js/search.js"></script>
+<script src="js/effect-1.js"></script>
+<script src="js/effect-2.js"></script>
+<script src="js/effect-3.js"></script>
+<script src="js/effect-4.js"></script>
+<script src="js/scripts.js"></script>
+<div id="search_template">
+    <div class="col left">
+        <div class="photo"></div>
+        <div class="ribbonrow"></div>
+        <div class="badgerow"></div>
+    </div>
+    <div class="col right">
+        <table style="width:100%;">
+            <tr class="idrow studentrow">
+                <td><span><img style="width:15px;" src="img/icon-id.png"></span></td>
+                <td class="content"><p>รหัสนักเรียน / <em class="id"></em></p></td>
+            </tr>
+            <tr class="namerow studentrow">
+                <td><span><img style="width:15px;" src="img/icon-name.png"></span></td>
+                <td class="content"><p class="name"></p></td>
+            </tr>
+            <tr class="awardrow studentrow">
+                <td><span><img style="width:15px;" src="img/icon-award.png"></span></td>
+                <td class="content"><p class="award"></p></td>
+            </tr>
+            <tr class="otherrow studentrow">
+                <td>
+                    <div><img style="width:15px;" src="img/icon-map.png"></div>
+                </td>
+                <td style="width: 100%;">
+                    <div class="other"></div>
+                </td>
+            </tr>
+        </table>
+        <div class="batchrow">
+            <div class="batch">
+                <div class="batchnumbox">
+                    <span><img style="width: 20px; padding-right: 5px;" src="img/icon-student.png"></span> รุ่น
+                    <span class="batchNumber"></span>
+                </div>
+                <div class="roomnumbox">
+                    <span><img style="width: 20px; padding-right: 5px" src="img/icon-student.png"></span> ห้อง
+                    <span class="classroomNumber"></span>
+                </div>
+                <div class="skew">&nbsp;</div>
+            </div>
+        </div>
+    </div>
+    <a class="close-btn grid-closing"><i class="fa fa-close"></i></a>
+</div>
+<input type="hidden" id="search-type-url1">
+<script>
+</script>
+</body>
+</html>

@@ -1,0 +1,2120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="user-scalable=no, width=768px">
+		<title>Mindmap</title>
+	</head>
+    <link rel="stylesheet" href="quark/stylesheet.css"/>
+	<link rel="stylesheet" href="kanit/css/fonts.css"/>
+    <link rel="stylesheet" href="font-awesome-4.5.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="http://hallofhistory.mwit.ac.th/admin/public/historyofmwit/stylesheet.css">
+    <!--<link rel="stylesheet" href="fonts/th_charm_of_au.css">-->
+	
+	<script src="js/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+	<script src="js/d3.js"></script>
+	<script src="js/d3plus.js"></script>
+    <script src="js/interact.min.js"></script>
+    <script src="js/hammer.min.js"></script>
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/panzoom.js"></script>
+    <script src="js/pointertouch.js"></script>
+    
+	<link href="css/styles.css" rel="stylesheet" />
+    
+	<body>
+		<script type="text/ecmascript">
+            
+            var api_link = 'http://hallofhistory.mwit.ac.th/admin/public/api/historyofmwit';
+            
+			var cookies = document.cookie.split(";");
+
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = cookies[i];
+				var eqPos = cookie.indexOf("=");
+				var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+				document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+			}
+			
+            var restX="",restY="";
+			//Get window dimensions for positioning of mindmap
+			var w=window,d=document,e=d.documentElement,g=d.getElementsByTagName('body')[0];
+			var x=w.innerWidth||e.clientWidth||g.clientWidth,y=w.innerHeight||e.clientHeight||g.clientHeight;
+			var width = 1 * x, height = 1 * y;
+            //var width = 1920, height= 1080;
+            var nodecks = [];
+			var curentNode = Object();
+			var nodecachein = [];
+            var nodecacheout = [];
+			var pointnodex = [];
+            var pointnodey = [];
+            var pointnode = [];
+			var seting = [];
+			var HMcheckarray = [];
+			var clickHM=[];
+			var mainnode = 0;
+			var hammerindex = 0;
+			
+			var padding = 6, maxRadius = 50;
+			
+			jQuery.ajax({
+                url: api_link,
+                async: false,
+                success: function (data) {
+                    response = data;
+                }
+            });
+            jQuery.each(response, function (key, val) {
+                seting[key] = val;
+            });
+
+			
+			function loadMindmap(lang){
+			
+				$("#flag-box").hide();
+				$("#ajax-loader").show();
+				setTimeout(function(){
+
+					jQuery.ajax({
+					   url: api_link+"/sorted/opened?lang="+lang,
+						async: false,
+						success: function (data) {
+							response = data;
+						}
+					});
+					jQuery.each(response, function (key, val) {
+						nodecachein[key] = val;
+					});
+
+					jQuery.ajax({
+						url: api_link+"/sorted/closed?lang="+lang,
+						async: false,
+					   success: function (data) {
+							response = data;
+						}
+					});
+					jQuery.each(response, function (key, val) {
+						nodecacheout[key] = val;
+					});
+					
+					loadData(lang);
+				
+				},1000);
+			
+			}
+            
+            $( document ).on( "tap doubletap click", ".zoomContainer img", function( event ) {
+                             console.log('tap');
+                             if($(this).hasClass('data-zoomed')){
+                             $(this).removeClass('data-zoomed');
+                             $(this).panzoom("reset");
+                             $(this).panzoom("option", "disablePan", true);
+                             }else{
+                             $(this).addClass('data-zoomed');
+                             $(this).panzoom("zoom");
+                             $(this).panzoom("option", "disablePan", false);
+                             $(this).panzoom( 'option', 'onEnd', function(){
+                                             $(this).removeClass('data-zoomed');
+                                             $(this).panzoom("reset");
+                                             $(this).panzoom("option", "disablePan", true);
+                                             });
+                             }
+                             console.log($(this).attr('data-zoomed'));
+                             });
+                             $( document ).on('mousedown touchstart', ".zoomContainer img.data-zoomed", function( e ) {
+                                              e.stopImmediatePropagation();
+                                              });
+
+			//Create SVG element, set dimensions
+			var svg = d3.select("body").append("svg")
+									.attr("id","main-id")
+									.attr("width", width)
+									.attr("height", height)
+									.attr("style", "background: url('"+seting["background_image"]+"');");
+
+			//Create instance of d3 type
+			var force = d3.layout.force()
+								.gravity(0.045) //How strongly it all gets pulled together - zero will float away
+								//.gravity(0)
+								//.distance(120)
+								.charge(-500)
+                                .theta(0.5)
+                                .alpha(0.8)
+								.friction(0.9)
+								.size([width, height]);
+								
+								
+								
+			var groupArr = [];
+			
+			
+			function loadData(lang){
+				//Grab the data from our external json file
+				d3.json(api_link+"/started/1?lang="+lang, function (error, json) {
+					//Add the data to our d3 instance now we have it
+					
+					$("#ajax-loader").hide();
+					
+                    var edges = [];
+                    json.links.forEach(function(e) {
+                        var sourceNode = json.nodes.filter(function(n) { return n.source == e.source; })[0];
+                        var targetNode = json.nodes.filter(function(n) { return n.source == e.target; })[0];
+
+                        edges.push({source: sourceNode, target: targetNode, namenode: e.namenode , lv: e.lv});
+                    });
+
+					force.links(edges)
+						 .nodes(json.nodes)
+                         .linkDistance(function (d) {
+                            var lv;
+                            if (d.lv <= 1)
+                                lv = 0.7;
+                            else if (d.lv % 2 == 1)
+                                lv = 0.9;
+                            else
+                                lv = 0.9;
+
+                            return lv * 150;
+						 })
+						 .start();
+						//Create our lines between data nodes
+					var link = svg.selectAll(".link")
+								.data(json.links) //Set the data from our grabbed links
+								.enter().append("line") //Add the line elements to our svg
+								.attr("class", function (d) {
+									return "link source" + d.namenode;
+								})
+								.attr("style", function (d) {
+									if (d.lv > 1) {
+										return "display: block"
+									}
+									else {
+										return "display: none"
+									}
+								})
+
+						//Create our data nodes
+					var	node = svg.selectAll(".node")
+								.data(json.nodes) //Set the data from our grabbed nodes
+								.enter().append("g") //Add the g elements to our svg
+                                .attr("consten",function(d){
+                                    return d.id;}
+                                )
+								.attr("class", "node")//Add class of 'node' to our g elements
+								.attr("r", function (d) {
+									return 100;
+								})
+								.call(force.drag) //Make these draggable
+								.attr("id", function (d) {
+									return "idnode" + d.source;
+								}); // Add id node
+
+						node.append("foreignObject")
+                                .attr("y", function (d) {
+                                    if (d.sub==-1) pxs = 60; else pxs = 45;
+                                    return 0 - pxs + 'px';
+                                }) //Offset
+                                .attr("x", function (d) {
+                                    if (d.sub==-1) pxs = 69; else pxs = 52;
+                                    return 0 - pxs + 'px';
+                                })
+								.attr("class", "popup")
+								.attr("transform", "rotate(0)")
+                                .attr("height", function (d) {
+                                    if (d.sub==-1)
+                                        return 120;
+                                    else
+                                        return 90
+                                })
+                                .attr("width", function (d) {
+                                    if (d.sub==-1)
+                                        return 138;
+                                    else
+                                        return 104
+                                })
+								.attr("id", function (d) {
+									return "Title" + d.id
+								})
+								.html(function (d) {
+                                    var iconif;
+                                    var plusicon=16;
+                                    var numtspan = 1;
+                                    var testserce;
+                                    testserce = d.name.replace("</tspan>","");
+                                    if(testserce.search("</tspan>")>0)
+                                            numtspan++;
+                                    testserce = testserce.replace("</tspan>","");
+                                    if(testserce.search("</tspan>")>0)
+                                        numtspan++;
+
+                                    if(d.icon!='') {
+                                        iconif = '<image id="img_icon' + d.id + '" xlink:href="'+ d.icon+'" x="32" y="15" height="20px" width="40px"/>';
+                                        plusicon = 34;
+                                    }
+                                    else{
+                                        iconif="";
+                                        if(numtspan==1)
+                                            plusicon = 31;
+                                        if(numtspan==2)
+                                            plusicon = 25;
+                                    }
+									
+									if(d.sub==0)
+									{
+										mainnode=d.sub;
+									}
+									else if(d.sub==-1)
+									{
+										mainnode=d.source;
+									}
+									else
+									{
+										mainnode=jQuery('#svgpol'+d.sub).attr('mainnonds');
+									}
+										
+                                    if (d.sub==-1)
+                                    {
+                                        if(d.icon!=''){
+                                            iconif = '<image id="img_icon' + d.id + '" xlink:href="'+ d.icon+'" x="42" y="17" height="35px" width="55px"/>';
+                                            plusicon = 44;
+                                        }
+                                        else{
+                                            iconif="";
+                                            if(numtspan==1)
+                                                plusicon = 42;
+                                            if(numtspan==2)
+                                                plusicon = 33;
+                                        }
+										
+                                       return "<div class='' id='rotate-area" + d.id + "'>" +
+                                                "<body xmlns='http://www.w3.org/1999/xhtml'>" +
+                                                "<div class='sub" + d.sub + "' id='arrow" + d.id + "' style='display: block' >" +
+                                                "<svg id='svgpol" + d.id + "' mainnonds='"+ mainnode +"'  lvnodes='"+ d.lv +"' style='background: none' xmlns='http://www.w3.org/2000/svg' version='1.1' width='138' height='120' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+                                                "<polygon id='polygon" + d.id + "' points='138,60 103,120 35,120 0,60 35,0 103,0' fill='url(#img" + d.id + ")' height='120' width='138'></polygon> " +
+                                                "<polygon id='polygon3_" + d.id + "' points='134,60 101,117 37,117 4,60 37,3 101,3' fill='url(#img5_" + d.id + ")' height='120' width='138'></polygon> " +
+                                                "<polygon id='polygon2_" + d.id + "' points='134,60 101,117 37,117 4,60 37,3 101,3' fill='url(#img3_" + d.id + ")' height='120' width='138'></polygon> " +
+                                                '<defs>' +
+                                                '<pattern id="img' + d.id + '" patternUnits="userSpaceOnUse" width="138" height="120">' +
+                                                '<image id="img2_' + d.id + '" xlink:href="'+ d.bg_color +'" x="0" width="138" height="120" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                '<defs>' +
+                                                '<pattern id="img3_' + d.id + '" patternUnits="userSpaceOnUse" width="138" height="120">' +
+                                                '<image id="img4_' + d.id + '" xlink:href="'+ d.image +'" width="138" x="0" y="0"  height="120" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                '<defs>' +
+                                                '<pattern id="img5_' + d.id + '" patternUnits="userSpaceOnUse" width="138" height="120">' +
+                                                '<image id="img6_' + d.id + '" xlink:href="'+ d.bg_image +'" width="138" height="120" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                iconif +
+                                                "<svg id='svgtext"+ d.id+"' height='140' width='125' x='19'>"+
+                                                '<text id="circleWrap' + d.id + '" text-anchor="middle" alignment-baseline="middle" fill="#FFF" style="letter-spacing: 0.17; text-shadow: 0px 0px 1px #000000;background-image: url(\''+ d.bg_image+'\');" class="wrap" y="'+plusicon+'px" x="0px" font-family="quarkbold" font-size="16.5">' +
+                                                d.name +
+                                                '</text>' + "</svg>"+
+                                                "</svg>" +
+                                                "</div>" + "</div>" +
+                                                "</body>"
+                                    }else{
+                                        return "<div class='' id='rotate-area" + d.id + "'>" +
+                                                "<body xmlns='http://www.w3.org/1999/xhtml'>" +
+                                                "<div class='sub" + d.sub + "' id='arrow" + d.id + "' style='display: block' >" +
+                                                "<svg id='svgpol" + d.id + "' mainnonds='"+ mainnode +"' lvnodes='"+ d.lv +"' style='background: none' xmlns='http://www.w3.org/2000/svg' version='1.1' width='104' height='90' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+                                                "<polygon id='polygon" + d.id + "' points='104,45 78,90 26,90 0,45 26,0 78,0' fill='url(#img" + d.id + ")' height='90' width='104'></polygon> " +
+                                                "<polygon id='polygon3_" + d.id + "' points='100,45 76,87 28,87 4,45 28,3 76,3' fill='url(#img5_" + d.id + ")' height='90' width='104'></polygon> " +
+                                                "<polygon id='polygon2_" + d.id + "' points='100,45 76,87 28,87 4,45 28,3 76,3' fill='url(#img3_" + d.id + ")' height='90' width='104'></polygon> " +
+                                                '<defs>' +
+                                                '<pattern id="img' + d.id + '" patternUnits="userSpaceOnUse" width="104" height="90">' +
+                                                '<image id="img2_' + d.id + '" xlink:href="'+ d.bg_color +'" x="0" width="104" height="90" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                '<defs>' +
+                                                '<pattern id="img3_' + d.id + '" patternUnits="userSpaceOnUse" width="104" height="90">' +
+                                                '<image id="img4_' + d.id + '" xlink:href="'+ d.image +'" width="104" height="90" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                '<defs>' +
+                                                '<pattern id="img5_' + d.id + '" patternUnits="userSpaceOnUse" width="104" height="90">' +
+                                                '<image id="img6_' + d.id + '" xlink:href="'+ d.bg_image +'" width="104" height="90" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                iconif +
+                                                "<svg id='svgtext"+ d.id+"' height='97' width='85' x='16'>"+
+                                                '<text id="circleWrap' + d.id + '" text-anchor="middle" alignment-baseline="middle" fill="#FFF" style="letter-spacing: 0.17; text-shadow: 0px 0px 1px #000000;background-image: url(\''+ d.bg_image+'\');" class="wrap" y="'+plusicon+'px" x="0px" font-family="quarkbold" font-size="12">' +
+                                                d.name +
+                                                '</text>' +"</svg>"+
+                                                "</svg>" +
+                                                "</div>" + "</div>" +
+                                                "</body>"
+                                    }
+
+								}); //Text value comes from 'name' in data
+
+					function update(idclick,tclick){
+                        var popup = {}, linkold={};
+						var tars = {};
+                        jQuery('.popup').each(function (index, value) {
+                            popup[jQuery(this).attr('id')] = jQuery(this).attr('width');
+						//transform
+                        });
+						
+						svg.selectAll("g.node").remove();
+						svg.selectAll("line.link").remove();
+                        var edges = [];
+                        json.links.forEach(function(e) {
+                            var sourceNode = json.nodes.filter(function(n) { return n.source == e.source; })[0];
+                            var targetNode = json.nodes.filter(function(n) { return n.source == e.target; })[0];
+                            edges.push({source: sourceNode, target: targetNode, namenode: e.namenode , lv: e.lv});
+                        });
+						force.links(edges)
+							 .nodes(json.nodes)
+							 .linkDistance(function (d) {
+									var lv;
+									if (d.lv <= 1)
+										lv = 0.7;
+									else if (d.lv % 2 == 1)
+										lv = 0.9;
+									else
+										lv = 0.9;
+
+									return lv * 150;
+							 })
+							 .start();
+							 
+						//Create our lines between data nodes
+						 link = svg.selectAll(".link")
+								.data(json.links) //Set the data from our grabbed links
+								.enter().append("line") //Add the line elements to our svg
+								.attr("class", function (d) {
+									return "link source" + d.namenode;
+								})
+								//Add class of 'link' to our line elements
+								.attr("style", function (d) {
+									if (d.lv > 1) {
+										return "display: block"
+									}
+									else {
+										return "display: none"
+									}
+								})
+
+						//Create our data nodes
+							node = svg.selectAll(".node")
+								.data(json.nodes) //Set the data from our grabbed nodes
+								.enter().append("g") //Add the g elements to our svg
+                                .attr("consten",function(d){
+                                    return d.id;
+                                })
+								.attr("class", "node")//Add class of 'node' to our g elements
+								.attr("r", function (d) {
+									return 100;
+								})
+								.call(force.drag) //Make these draggable
+								.attr("id", function (d) {
+									return "idnode" + d.source;
+								}); // Add id node
+
+						node.append("foreignObject")
+								.attr("y", function (d) {
+									if ((popup["Title"+ d.id] == 138 || d.sub == -1 || idclick+"_"+tclick == d.source+"_1")&& (idclick+"_"+tclick!=d.source+"_0" || d.sub==-1)) pxs = 60; else pxs = 45;
+									return 0 - pxs + 'px';
+								}) //Offset
+								.attr("x", function (d) {
+									if ((popup["Title"+ d.id] == 138 || d.sub == -1 || idclick+"_"+tclick == d.source+"_1")&& (idclick+"_"+tclick!=d.source+"_0" || d.sub==-1)) pxs = 69; else pxs = 52;
+									return 0 - pxs + 'px';
+								})
+								.attr("class", "popup")
+								.attr("transform", "rotate(0)")
+								.attr("height", function (d) {
+                                    if ((popup["Title"+ d.id] == 138 || d.sub==-1 || idclick+"_"+tclick == d.source+"_1")&& (idclick+"_"+tclick!=d.source+"_0" || d.sub==-1))
+                                        return 120;
+                                    else
+									    return 90
+								})
+								.attr("width", function (d) {
+                                    if ((popup["Title"+ d.id] == 138 || d.sub==-1 || idclick+"_"+tclick == d.source+"_1")&& (idclick+"_"+tclick!=d.source+"_0" || d.sub==-1))
+                                        return 138;
+                                    else
+									    return 104;
+								})
+								.attr("id", function (d) {
+									return "Title" + d.id
+								})
+								.html(function (d) {
+									if(d.sub==0)
+									{
+										mainnode=d.sub;
+									}
+									else if(d.sub==-1)
+									{
+										mainnode=d.source;
+									}
+									else
+									{
+										mainnode=jQuery('#svgpol'+d.sub).attr('mainnonds');
+									}
+										
+                                    if ((popup["Title"+ d.id] == 138 || d.sub==-1  || idclick+"_"+tclick == d.source+"_1") && (idclick+"_"+tclick!=d.source+"_0" || d.sub==-1))
+                                    {
+                                        var iconif;
+                                        var plusicon = 21;
+                                        var numtspan = 1;
+                                        var testserce;
+                                        testserce = d.name.replace("</tspan>","");
+                                        if(testserce.search("</tspan>")>0)
+                                            numtspan++;
+                                        testserce = testserce.replace("</tspan>","");
+                                        if(testserce.search("</tspan>")>0)
+                                            numtspan++;
+                                        if(d.icon!=''){
+                                            iconif = '<image id="img_icon' + d.id + '" xlink:href="'+ d.icon+'" x="42" y="17" height="35px" width="55px"/>';
+                                            plusicon = 44;
+                                        }
+                                        else{
+                                            iconif="";
+                                            if(numtspan==1)
+                                                plusicon = 42;
+                                            if(numtspan==2)
+                                                plusicon = 33;
+                                        }
+										
+
+                                        return "<div class='' id='rotate-area" + d.id + "'>" +
+                                                "<body xmlns='http://www.w3.org/1999/xhtml'>" +
+                                                "<div class='sub" + d.sub + "' id='arrow" + d.id + "' style='display: block' >" +
+                                                "<svg id='svgpol" + d.id + "' mainnonds='"+ mainnode +"' lvnodes='"+ d.lv +"' style='background: none' xmlns='http://www.w3.org/2000/svg' version='1.1' width='138' height='120' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+                                                "<polygon id='polygon" + d.id + "' points='138,60 103,120 35,120 0,60 35,0 103,0' fill='url(#img" + d.id + ")' height='120' width='138'></polygon> " +
+                                                "<polygon id='polygon3_" + d.id + "' points='134,60 101,117 37,117 4,60 37,3 101,3' fill='url(#img5_" + d.id + ")' height='120' width='138'></polygon> " +
+                                                "<polygon id='polygon2_" + d.id + "' points='134,60 101,117 37,117 4,60 37,3 101,3' fill='url(#img3_" + d.id + ")' height='120' width='138'></polygon> " +
+                                                '<defs>' +
+                                                '<pattern id="img' + d.id + '" patternUnits="userSpaceOnUse" width="138" height="120">' +
+                                                '<image id="img2_' + d.id + '" xlink:href="'+ d.bg_color +'" x="0" width="138" height="120" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                '<defs>' +
+                                                '<pattern id="img3_' + d.id + '" patternUnits="userSpaceOnUse" width="138" height="120">' +
+                                                '<image id="img4_' + d.id + '" xlink:href="'+ d.image +'" width="138" x="0" y="0"  height="120" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                '<defs>' +
+                                                '<pattern id="img5_' + d.id + '" patternUnits="userSpaceOnUse" width="138" height="120">' +
+                                                '<image id="img6_' + d.id + '" xlink:href="'+ d.bg_image +'" width="138" height="120" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                iconif +
+                                                "<svg id='svgtext"+ d.id+"' height='140' width='125' x='19'>"+
+                                                '<text id="circleWrap' + d.id + '" text-anchor="middle" alignment-baseline="middle" fill="#FFF" style="letter-spacing: 0.17; text-shadow: 0px 0px 1px #000000;background-image: url(\''+ d.bg_image+'\');" class="wrap" y="'+plusicon+'px" x="0px" font-family="quarkbold" font-size="16.5">' +
+                                                d.name +
+                                                '</text>' + "</svg>"+
+                                                "</svg>" +
+                                                "</div>" + "</div>" +
+                                                "</body>"
+                                    }
+                                    else
+                                    {
+                                        var iconif;
+                                        var plusicon = 16;
+                                        var numtspan = 1;
+                                        var testserce;
+                                        testserce = d.name.replace("</tspan>","");
+                                        if(testserce.search("</tspan>")>0)
+                                            numtspan++;
+                                        testserce = testserce.replace("</tspan>","");
+                                        if(testserce.search("</tspan>")>0)
+                                            numtspan++;
+
+                                        if(d.icon!=''){
+                                            plusicon = 34;
+                                            iconif = '<image id="img_icon' + d.id + '" xlink:href="'+ d.icon+'" x="32" y="15" height="20px" width="40px"/>';
+
+                                        }
+                                        else{
+                                            iconif="";
+                                            if(numtspan==1)
+                                                plusicon = 31;
+                                            if(numtspan==2)
+                                                plusicon = 25;
+                                        }
+
+                                        return "<div class='' id='rotate-area" + d.id + "'>" +
+                                                "<body xmlns='http://www.w3.org/1999/xhtml'>" +
+                                                "<div class='sub" + d.sub + "' id='arrow" + d.id + "' style='display: block' >" +
+                                                "<svg id='svgpol" + d.id + "' mainnonds='"+ mainnode +"' lvnodes='"+ d.lv +"' style='background: none' xmlns='http://www.w3.org/2000/svg' version='1.1' width='104' height='90' xmlns:xlink='http://www.w3.org/1999/xlink'>" +
+                                                "<polygon id='polygon" + d.id + "' points='104,45 78,90 26,90 0,45 26,0 78,0' fill='url(#img" + d.id + ")' height='90' width='104'></polygon> " +
+                                                "<polygon id='polygon3_" + d.id + "' points='100,45 76,87 28,87 4,45 28,3 76,3' fill='url(#img5_" + d.id + ")' height='90' width='104'></polygon> " +
+                                                "<polygon id='polygon2_" + d.id + "' points='100,45 76,87 28,87 4,45 28,3 76,3' fill='url(#img3_" + d.id + ")' height='90' width='104'></polygon> " +
+                                                '<defs>' +
+                                                '<pattern id="img' + d.id + '" patternUnits="userSpaceOnUse" width="104" height="90">' +
+                                                '<image id="img2_' + d.id + '" xlink:href="'+ d.bg_color +'" x="0" width="104" height="90" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                '<defs>' +
+                                                '<pattern id="img3_' + d.id + '" patternUnits="userSpaceOnUse" width="104" height="90">' +
+                                                '<image id="img4_' + d.id + '" xlink:href="'+ d.image +'" width="104" x="0" y="0"  height="90" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                '<defs>' +
+                                                '<pattern id="img5_' + d.id + '" patternUnits="userSpaceOnUse" width="104" height="90">' +
+                                                '<image id="img6_' + d.id + '" xlink:href="'+ d.bg_image +'" width="104" height="90" />' +
+                                                '</pattern>' +
+                                                '</defs>' +
+                                                iconif +
+                                                "<svg id='svgtext"+ d.id+"' height='97' width='85' x='16'>"+
+                                                '<text id="circleWrap' + d.id + '" text-anchor="middle" alignment-baseline="middle" fill="#FFF" style="letter-spacing: 0.17; text-shadow: 0px 0px 1px #000000;background-image: url(\''+ d.bg_image+'\');" class="wrap" y="'+plusicon+'px" x="0px" font-family="quarkbold" font-size="12">' +
+                                                d.name +
+                                                '</text>' + "</svg>"+
+                                                "</svg>" +
+                                                "</div>" + "</div>" +
+                                                "</body>";
+                                    }
+								
+								}); //Text value comes from 'name' in data
+								
+                        force.on("tick", function (e) {
+                            var q = d3.geom.quadtree(node), i = 0, n = node.length;
+                            force.resume(50).start();
+                            while (++i < n) {
+                                q.visit(collide(node[i]));
+                            }
+
+                            svg.selectAll("g")
+									//.each(gravity(.2 * e.alpha))
+									//.each(collides(.5))
+                                    .attr("cx", function (d) {
+                                        return d.x;
+                                    })
+                                    .attr("cy", function (d) {
+                                        return d.y;
+                                    });
+									
+									function gravity(alpha) {
+										return function(d) {
+												//1
+											eval(d.eval);
+											
+											//eval("var yhe = height/2");
+											if(d.sub==-1)
+											{
+												d.y += (yhe - d.y) * alpha;
+												d.x += (xwi - d.x) * alpha;
+											}
+											else
+											{
+												d.y += (jQuery("#idnode"+d.sub).attr("cy") - d.y) * alpha;
+												d.x += (jQuery("#idnode"+d.sub).attr("cx") - d.x) * alpha;
+											}
+										};
+									}
+									function collides(alpha) {
+									  var quadtree = d3.geom.quadtree(json.nodes);
+									  return function(d) {
+										var r = d.radius + maxRadius + padding,
+											nx1 = d.x - r,
+											nx2 = d.x + r,
+											ny1 = d.y - r,
+											ny2 = d.y + r;
+										quadtree.visit(function(quad, x1, y1, x2, y2) {
+										  if (quad.point && (quad.point !== d)) {
+											var x = d.x - quad.point.x,
+												y = d.y - quad.point.y,
+												l = Math.sqrt(x * x + y * y),
+												r = d.radius + quad.point.radius + (d.color !== quad.point.color) * padding;
+											if (l < r) {
+											  l = (l - r) / l * alpha;
+											  d.x -= x *= l;
+											  d.y -= y *= l;
+											  quad.point.x += x;
+											  quad.point.y += y;
+											}
+										  }
+										  return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+										});
+									  };
+									}
+                            //config x,y not out screen
+                            node.attr("transform", function (d) {
+                                var testsubs = jQuery('#Title' + d.id).attr("transform");
+                                testsubs = testsubs.replace("rotate(", "");
+                                testsubs = testsubs.replace(")", "");
+                              /*  if((testsubs%10)==0 && d.sub==-1){
+									if(d.y<(height/2))
+										jQuery('#Title' + d.id).attr("transform", "rotate(180)");
+									else if(d.y>(height/2))
+										jQuery('#Title' + d.id).attr("transform", "rotate(0)");
+								} else if((testsubs%10)==0) {
+									var mainrota = jQuery('#Title' + d.sub).attr("transform");
+									jQuery('#Title' + d.id).attr("transform", mainrota);
+								} */
+
+                                if(jQuery("#svgtext"+ d.id).attr("width")==85){
+                                    jQuery(".tspan_"+ d.id).attr("x",36);
+                                    jQuery(".tspan_"+ d.id).attr("dy",15);
+                                } else {
+                                    jQuery(".tspan_"+ d.id).attr("x",50);
+                                    jQuery(".tspan_"+ d.id).attr("dy",20);
+                                }
+
+                                if (d.x < width - 80 && d.x > 80) {
+                                    dx = d.x;
+                                } else if (d.x <= 80) {
+                                    dx = 81;
+                                } else {
+                                    dx = width - 81;
+                                }
+
+                                if (d.y < height - 60 && d.y > 60) {
+                                    dy = d.y;
+                                } else if (d.y <= 60) {
+                                    dy = 61;
+                                } else {
+                                    dy = height - 61;
+                                }
+								
+								//if(jQuery(".contentrow"+ d.id).length){
+								//	if(json.nodes[d.index].px-pointnodex[d.id] > 10 || json.nodes[d.index].px-pointnodex[d.id] < -10 || json.nodes[d.index].py-pointnodey[d.id] > 10 || json.nodes[//d.index].py-pointnodey[d.id] < -10){
+								///		pointnodex[d.id] = json.nodes[d.index].px;
+								//		pointnodey[d.id] = json.nodes[d.index].py;
+								//		return "translate(" + dx + "," + dy + ")";
+								//	}
+                               //     json.nodes[d.index].px = pointnodex[d.id];
+                               //     json.nodes[d.index].py = pointnodey[d.id];
+                               //     json.nodes[d.index].x = pointnodex[d.id];
+                               //     json.nodes[d.index].y = pointnodey[d.id];
+                              //      return "translate(" + pointnodex[d.id] + "," + pointnodey[d.id] + ")";
+                               // } else
+									return "translate(" + dx + "," + dy + ")";
+                            });
+
+                            link.attr("x1", function (d) {
+                                        if (jQuery("#idnode"+ d.source).attr("cx") < width - 80 && jQuery("#idnode"+ d.source).attr("cx") > 80) {
+                                            dx = jQuery("#idnode"+ d.source).attr("cx");
+                                        } else if (jQuery("#idnode"+ d.source).attr("cx") <= 80) {
+                                            dx = 81;
+                                        } else {
+                                            dx = width - 81;
+                                        }
+                                        return dx;
+                                    })
+                                    .attr("y1", function (d) {
+                                        if (jQuery("#idnode"+ d.source).attr("cy") < height - 60 && jQuery("#idnode"+ d.source).attr("cy") > 60) {
+                                            dy = jQuery("#idnode"+ d.source).attr("cy");
+                                        } else if (jQuery("#idnode"+ d.source).attr("cy") <= 60) {
+                                            dy = 61;
+                                        } else {
+                                            dy = height - 61;
+                                        }
+                                        return dy;
+                                    })
+                                    .attr("x2", function (d) {
+                                        if (jQuery("#idnode"+ d.target).attr("cx") < width - 80 && jQuery("#idnode"+ d.target).attr("cx") > 80) {
+                                            dx = jQuery("#idnode"+ d.target).attr("cx");
+                                        } else if (jQuery("#idnode"+ d.target).attr("cx") <= 80) {
+                                            dx = 81;
+                                        } else {
+                                            dx = width - 81;
+                                        }
+										
+										//if(jQuery(".contentrow"+ d.target).length)
+                                         //   return pointnodex[d.target];
+                                        //else
+											return dx;
+                                    })
+                                    .attr("y2", function (d) {
+                                        if (jQuery("#idnode"+ d.target).attr("cy") < height - 60 && jQuery("#idnode"+ d.target).attr("cy") > 60) {
+                                            dy = jQuery("#idnode"+ d.target).attr("cy");
+                                        } else if (jQuery("#idnode"+ d.target).attr("cy") <= 60) {
+                                            dy = 61;
+                                        } else {
+                                            dy = height - 61;
+                                        }
+										//if(jQuery(".contentrow"+ d.target).length)
+                                        //    return pointnodey[d.target];
+                                       // else
+											return dy;
+                                    });
+
+                            if (curentNode) {
+                                jQuery.each(curentNode, function (index, value) {
+                                    if(jQuery(".contentrow"+jQuery("g#"+jQuery(curentNode[index][0]).attr('id')).attr("consten")).length) {
+                                        var postion = jQuery("g#" + jQuery(curentNode[index][0]).attr('id')).attr("transform");
+                                        postion = postion.replace("translate(", "");
+                                        postion = postion.replace(")", "");
+                                        var positionBox = postion.split(",");
+                                        positionBox[0] = parseFloat(positionBox[0])+20;
+                                        positionBox[1] = parseFloat(positionBox[1]);
+                                        var positionBox1 = [];
+                                        if (!jQuery('#idnode' + value[0]['__data__'].sub).length) {
+                                            positionBox1 = [0, 0];
+                                        } else {
+                                            postion1 = jQuery('#idnode' + value[0]['__data__'].sub).attr("transform");
+                                            postion1 = postion1.replace("translate(", "");
+                                            postion1 = postion1.replace(")", "");
+                                            positionBox1 = postion1.split(",");
+                                        }
+                                        var checktop = 0;
+                                        if( jQuery(".contentrow"+jQuery("g#"+jQuery(curentNode[index][0]).attr('id')).attr("consten")).attr("class")=="infoboxmin"){
+                                            var rotcontents = jQuery("#Title"+jQuery("g#"+jQuery(curentNode[index][0]).attr('id')).attr("consten")).attr("transform");
+                                            rotcontents = rotcontents.replace("rotate(", "");
+                                            rotcontents = rotcontents.replace(")", "");
+                                            rotcontents = parseFloat(rotcontents);
+                                            if(rotcontents==0 || rotcontents== 180) {
+                                                if (positionBox1[1] > positionBox[1]) {
+                                                    positionBox[1] = positionBox[1];
+                                                    checktop = positionBox[1] + +70;
+                                                    if (checktop > height - 280) {
+                                                        checktop = checktop - 185;
+                                                    }
+                                                } else {
+                                                    checktop = +positionBox[1] + +70;
+                                                    if (checktop > height - 280) {
+                                                        checktop = checktop - 185;
+                                                    }
+                                                }
+                                                if (checktop < 85 || positionBox[1] < 85 && positionBox1[1] > positionBox[1] &&rotcontents!=180 ) {
+                                                    checktop = positionBox[1] + +280;
+                                                }
+                                                if (positionBox1[0] > positionBox[0] - 40) {
+                                                    positionBox[0] = positionBox[0] - 385;
+                                                }
+                                                if(positionBox[0]<5) {
+                                                    positionBox[0] = positionBox[0] + + 385;
+                                                } else if(positionBox[0]==80){
+                                                    positionBox[0]=80;
+
+                                                } else if(positionBox[0]>width-345){
+                                                    positionBox[0] = positionBox[0] - 385;
+                                                }
+                                            } else if(rotcontents==90 || rotcontents==-90) {
+                                                if (positionBox1[1] > positionBox[1]) {
+                                                    positionBox[1] = positionBox[1];
+                                                    checktop = positionBox[1] + +150;
+                                                    if (checktop > height - 280) {
+                                                        checktop = checktop - 360;
+                                                    }
+                                                } else {
+                                                    checktop = +positionBox[1] + +150;
+                                                    if (checktop > height - 280) {
+                                                        checktop = checktop - 360;
+                                                    }
+                                                }
+                                                if (checktop < 85 || positionBox[1] < 85 && positionBox1[1] > positionBox[1]) {
+                                                    checktop = positionBox[1] + +160;
+                                                }
+
+                                                if (positionBox1[0] > positionBox[0] - 40) {
+                                                    positionBox[0] = positionBox[0] - 280;
+                                                } else {
+                                                    positionBox[0] = positionBox[0] - 100;
+                                                }
+
+                                                if(positionBox[0]<5) {
+                                                    positionBox[0] = positionBox[0] + + 180;
+                                                } else if(positionBox[0]==80){
+                                                    positionBox[0]=80;
+                                                } else if(positionBox[0]>width-345){
+                                                    positionBox[0] = positionBox[0] - 180;
+                                                }
+                                            }
+                                        } else {
+                                            if (positionBox1[1] > positionBox[1]) {
+                                                positionBox[1] = positionBox[1] - 280;
+                                                checktop = positionBox[1];
+                                                if (checktop > height-280) {
+                                                    checktop = checktop - 350;
+                                                }
+                                            } else {
+                                                checktop = +positionBox[1] + +70;
+                                                if (checktop > height - 280) {
+                                                    checktop = checktop - 350;
+                                                }
+                                            }
+                                            if(checktop < 85 || positionBox[1]< 85 && positionBox1[1] > positionBox[1])
+                                                checktop = positionBox[1]+ +345;
+                                            if (positionBox1[0] > positionBox[0] - 40) {
+                                                positionBox[0] = positionBox[0] - 385;
+                                            }
+                                            if(positionBox[0]<5) {
+                                                positionBox[0] = positionBox[0] + + 385;
+                                            } else if(positionBox[0]==80){
+                                                positionBox[0]=80;
+                                            } else if(positionBox[0]>width-345){
+                                                positionBox[0] = positionBox[0] - 385;
+                                            }
+                                        }
+
+                                        var testsubs = jQuery('#Title' + jQuery(curentNode[index][0]).attr('consten')).attr("transform");
+                                        testsubs = testsubs.replace("rotate(", "");
+                                        testsubs = testsubs.replace(")", "");
+                                        var transform = getCookie("contentrow"+index);
+                                        if (transform == ""){
+                                            transform = "transform: scale(1) rotate("+testsubs+"deg);";
+                                        } else {
+                                            var cgs = transform.split("scale(")[1];
+                                            cgs = cgs.replace(")", "");
+                                            var numcgs = cgs.lastIndexOf("rotate");
+                                            cgs = cgs.substring(0, numcgs-1);
+                                            var scanoles = parseFloat(cgs);
+                                            transform = transform.split("rotate(")[1];
+                                            transform = transform.replace("deg)", "");
+                                            var ckrotate = jQuery('#Title' + index).attr("transform");
+                                            ckrotate = ckrotate.replace("rotate(", "");
+                                            ckrotate = ckrotate.replace(")", "");
+                                            var chrotate2;
+                                            chrotate2=getCookie("titlerotate"+index);
+                                            if(!chrotate2)
+                                                chrotate2=-1;
+                                            if(ckrotate==chrotate2 && transform!=0){
+                                                transform = "transform: scale("+scanoles+") rotate("+transform+"deg);";
+                                            } else {
+                                                transform = "transform: scale("+scanoles+") rotate("+testsubs+"deg);";
+                                            }
+                                        }
+                                 //       document.cookie = "contentrow"+index + "="+transform;
+                                  //      document.cookie = "titlerotate"+index + "="+ckrotate;
+                                     //   jQuery('.contentrow' + index).attr("style", "left:" + positionBox[0] + "px;top:" + checktop + "px;" + transform);
+										var heicontent = height/2.45;
+										var hriboxcon = height/2.71;
+										
+										var square = document.getElementById("article-"+value[0]['__data__'].id);
+										if(square!=null){
+											square.style.height = hriboxcon+"px";
+											square = document.getElementById("contentrow"+value[0]['__data__'].id);
+											square.style.height = heicontent+"px";
+										}
+									}
+                                });
+                            }
+                        });
+					}
+
+                    function changesize(wid,hei,id){
+                        setwidthheigth(wid, hei, "svgpol" + id);
+                        setwidthheigth(wid, hei, "polygon" + id);
+                        setwidthheigth(wid, hei, "img" + id);
+                        setwidthheigth(wid, hei, "img2_" + id);
+                        setwidthheigth(wid, hei, "Title" + id);
+                        if(wid==104) {
+                            jQuery("#Title" + id).attr("x", "-45px");
+                            jQuery("#Title" + id).attr("y", "-52px");
+                            jQuery("#svgtext" + id).attr("width", "85");
+                            jQuery("#svgtext" + id).attr("height", "97");
+                            jQuery("#svgtext" + id).attr("x", "15");
+                            jQuery(".tspan_"+ id).attr("x",36);
+                            jQuery(".tspan_"+ id).attr("dy",15);
+                            if(jQuery("#circleWrap" + id).attr("y")=="44px"){
+                                jQuery("#circleWrap" + id).attr("y", "34px");
+                            } else if(jQuery("#circleWrap" + id).attr("y")=="42px"){
+                                jQuery("#circleWrap" + id).attr("y", "31px");
+                            } else if(jQuery("#circleWrap" + id).attr("y")=="33px"){
+                                jQuery("#circleWrap" + id).attr("y", "25px");
+                            } else{
+                                jQuery("#circleWrap" + id).attr("y", "16px");
+                            }
+                            jQuery("#circleWrap" + id).attr("style", "letter-spacing: 0.17; font-size: 12px; background-image: url('');");
+                            jQuery("#polygon" + id).attr("points", "104,45 78,90 26,90 0,45 26,0 78,0");
+                            setwidthheigth(104, 90, "img3_" + id);
+                            setwidthheigth(104, 90, "img5_" + id);
+                            setwidthheigth(104, 90, "img4_" + id);
+                            setwidthheigth(104, 90, "img6_" + id);
+                            setwidthheigth(104, 90, "polygon2_" + id);
+                            setwidthheigth(104, 90, "polygon3_" + id);
+                            jQuery("#img_icon" + id).attr("x", "32");
+                            jQuery("#img_icon" + id).attr("y", "15");
+                            jQuery("#img_icon"+ id).attr("height","20px");
+                            jQuery("#img_icon"+ id).attr("width","40px");
+                            jQuery("#img4_" + id).attr("width", "104");
+                            jQuery("#img4_" + id).attr("height", "90");
+                            jQuery("#img4_" + id).attr("x", "0");
+                            jQuery("#img4_" + id).attr("y", "0");
+                            jQuery("#img6_" + id).attr("width", "104");
+                            jQuery("#img6_" + id).attr("height", "90");
+                            jQuery("#polygon2_" + id).attr("points", "100,45 76,87 28,87 4,45 28,3 76,3");
+                            jQuery("#polygon3_" + id).attr("points", "100,45 76,87 28,87 4,45 28,3 76,3");
+                        }else {
+                            jQuery("#Title" + d).attr("x", "-60px");
+                            jQuery("#Title" + d).attr("y", "-69px");
+                            jQuery("#svgtext" + id).attr("width", "125");
+                            jQuery("#svgtext" + id).attr("height", "140");
+                            jQuery("#svgtext" + id).attr("x", "19");
+                            jQuery(".tspan_"+ id).attr("x",50);
+                            jQuery(".tspan_"+ id).attr("dy",20);
+                            if(jQuery("#circleWrap" + id).attr("y")=="34px"){
+                                jQuery("#circleWrap" + id).attr("y", "44px");
+                            }else if(jQuery("#circleWrap" + id).attr("y")=="31px"){
+                                jQuery("#circleWrap" + id).attr("y", "42px");
+                            }else if(jQuery("#circleWrap" + id).attr("y")=="25px"){
+                                jQuery("#circleWrap" + id).attr("y", "33px");
+                            } else{
+                                jQuery("#circleWrap" + id).attr("y", "21px");
+                            }
+
+                            jQuery("#circleWrap" + id).attr("style", "letter-spacing: 0.17; font-size: 16.5px; background-image: url('');");
+                            jQuery("#polygon" + id).attr("points", "138,60 103,120 35,120 0,60 35,0 103,0");
+                            setwidthheigth(138, 120, "img3_" + id);
+                            setwidthheigth(138, 120, "img5_" + id);
+                            setwidthheigth(138, 120, "img4_" + id);
+                            setwidthheigth(138, 120, "img6_" + id);
+                            setwidthheigth(138, 120, "polygon2_" + id);
+                            setwidthheigth(138, 120, "polygon3_" + id);
+                            jQuery("#img_icon" + id).attr("x", "42");
+                            jQuery("#img_icon" + id).attr("y", "17");
+                            jQuery("#img_icon"+ id).attr("height","35px");
+                            jQuery("#img_icon"+ id).attr("width","55px");
+                            jQuery("#img4_" + id).attr("x", "0");
+                            jQuery("#img4_" + id).attr("y", "0");
+                            jQuery("#img4_" + id).attr("width", "138");
+                            jQuery("#img4_" + id).attr("height", "120");
+                            jQuery("#img6_" + id).attr("width", "138");
+                            jQuery("#img6_" + id).attr("height", "120");
+                            jQuery("#polygon2_" + id).attr("points", "134,60 101,117 37,117 4,60 37,3 101,3");
+                            jQuery("#polygon3_" + id).attr("points", "134,60 101,117 37,117 4,60 37,3 101,3");
+                        }
+                    }
+					
+                    jQuery.each(json.nodes, function (key, value) {
+                        clicknodes(key,value);
+						if (json.nodes[key].lv > 1) {
+							jQuery("#arrow" + json.nodes[key].id).attr('style', 'display: block');
+						}
+					});
+					
+                    function clicknodes(key,value)
+                    {
+                        nodecks.push(value.source);
+						var clickcheck = 0;
+  
+					var downsa = [];
+					var downsb = [];
+					interact('#idnode'+value.source).on('down', function (d) {
+						downsa['idnode'+value.source] = d.pageX;
+						downsb['idnode'+value.source] = d.pageY;
+					
+					});
+					
+					
+					interact('#idnode'+value.source).on('up', function (d) {
+				//	});
+											
+					//	interact('#idnode'+value.source).on('tap', function (d) {
+						if( ((parseInt(d.pageX)-parseInt(downsa['idnode'+value.source]))<50 && (parseInt(d.pageX)-parseInt(downsa['idnode'+value.source]))>-50) && ((parseInt(d.pageY)-parseInt(downsb['idnode'+value.source])) < 50 && (parseInt(d.pageY)-parseInt(downsb['idnode'+value.source])) > -50))
+						{
+                            var oi= 0,keys=0;
+                            while(oi < node[0].length){
+                                if(value.source == node[0][oi]["__data__"]["source"]){
+                                    keys = oi;
+                                    oi = node[0].length;
+                                }
+                                oi++;
+                            }
+                            d = node[0][keys]["__data__"];
+							
+                            if(d.value==0) {
+                                var response = {};
+                                if(jQuery(".source"+d.source).length) {
+									clickcheck = 0;
+                                    if(!nodecacheout[d.source]) {
+                                        jQuery.ajax({
+                                            url: api_link+'/sorted/' + d.source + '/9999',
+                                            async: false,
+                                            success: function (data) {
+                                                response = data;
+                                            }
+                                        });
+                                        nodecacheout[d.source] = response;
+                                    }else{
+                                        response = nodecacheout[d.source];
+                                    }
+									
+                                    jQuery.each(response.nodes, function (i, val) {
+                                        findAndRemove(json.nodes, 'source', val.source);
+                                        if(jQuery('.contentrow' + val.id).length) {
+                                            closeBox(val.id);
+                                        }
+                                    });
+                                    jQuery.each(response.links, function (i, val) {
+                                        findAndRemove(json.links, 'namenode', val.namenode);
+                                    });
+                                } else {
+                                    jQuery('#idnode'+value.source).attr("cx");
+                                    jQuery('#idnode'+value.source).attr("cy");
+									clickcheck = 1;
+                                    if(!nodecachein[d.source]) {
+                                        jQuery.ajax({
+                                            url: api_link+'/sorted/'+d.source+'/1',
+                                            async: false,
+                                            success: function (data) {
+                                                response = data;
+                                            }
+                                        });
+                                    nodecachein[d.source] = response;
+                                    }else{
+                                        response = nodecachein[d.source];
+                                    }
+////////////////////////////////////////////////////////////////////////////////////
+									var maincloses = jQuery("#svgpol"+d.source).attr("mainnonds");
+									var lvnodseup = jQuery("#svgpol"+d.source).attr("lvnodes");
+									if(lvnodseup==1){
+										clrespon = nodecacheout[maincloses];
+										jQuery.each(clrespon.nodes, function (i, val) {
+											if(val.lv>1){
+												findAndRemove(json.nodes, 'source', val.source);
+											}
+											if(jQuery('.contentrow' + val.id).length) {
+													closeBox(val.id);
+												}
+											if(val.lv==1){
+												setwidthheigth(104, 90, "svgpol" + val.id);
+												setwidthheigth(104, 90, "polygon" + val.id);
+												setwidthheigth(104, 90, "img" + val.id);
+												setwidthheigth(104, 90, "img2_" + val.id);
+												setwidthheigth(104, 90, "Title" + val.id);
+												jQuery("#Title" + val.id).attr("x", "-45px");
+												jQuery("#Title" + val.id).attr("y", "-52px");
+												jQuery("#svgtext" + val.id).attr("width", "85");
+												jQuery("#svgtext" + val.id).attr("height", "97");
+												jQuery("#svgtext" + val.id).attr("x", "16");
+												jQuery(".tspan_"+ val.id).attr("x",36);
+												jQuery(".tspan_"+ val.id).attr("dy",15);
+												if(jQuery("#circleWrap" + val.id).attr("y")=="44px"){
+													jQuery("#circleWrap" + val.id).attr("y", "34px");
+												} else if(jQuery("#circleWrap" + val.id).attr("y")=="42px"){
+													jQuery("#circleWrap" + val.id).attr("y", "31px");
+												} else if(jQuery("#circleWrap" + val.id).attr("y")=="33px"){
+													jQuery("#circleWrap" + val.id).attr("y", "25px");
+												} else{
+													jQuery("#circleWrap" + val.id).attr("y", "16px");
+												}
+												jQuery("#circleWrap" + val.id).attr("style", "letter-spacing: 0.17; font-size: 12px; background-image: url('"+ val.bg_image+"');");
+												jQuery("#polygon" + val.id).attr("points", "104,45 78,90 26,90 0,45 26,0 78,0");
+												setwidthheigth(104, 90, "img3_" + val.id);
+												setwidthheigth(104, 90, "img5_" + val.id);
+												setwidthheigth(104, 90, "img4_" + val.id);
+												setwidthheigth(104, 90, "img6_" + val.id);
+												setwidthheigth(104, 90, "polygon2_" + val.id);
+												setwidthheigth(104, 90, "polygon3_" + val.id);
+												jQuery("#img_icon" + val.id).attr("x", "32");
+												jQuery("#img_icon" + val.id).attr("y", "15");
+												jQuery("#img_icon"+ val.id).attr("height","20px");
+												jQuery("#img_icon"+ val.id).attr("width","40px");
+												jQuery("#img4_" + val.id).attr("width", "104");
+												jQuery("#img4_" + val.id).attr("height", "90");
+												jQuery("#img6_" + val.id).attr("width", "104");
+												jQuery("#img6_" + val.id).attr("height", "90");
+												jQuery("#img4_" + val.id).attr("x", "0");
+												jQuery("#img4_" + val.id).attr("y", "0");
+												jQuery("#polygon2_" + val.id).attr("points", "100,45 76,87 28,87 4,45 28,3 76,3");
+												jQuery("#polygon3_" + val.id).attr("points", "100,45 76,87 28,87 4,45 28,3 76,3");
+											}
+										});
+										jQuery.each(clrespon.links, function (i, val) {
+											if(val.lv>1){
+												findAndRemove(json.links, 'namenode', val.namenode);
+											}
+											
+										});
+									}
+////////////////////////////////////////////////////////////////////////////////////
+									
+                                    jQuery.each(response.nodes, function (i, val) {
+                                        if(!jQuery('#idnode' + val.source).length) {
+                                            var newnodejson = jQuery("#arrow"+val.sub).attr("class");
+                                            newnodejson = newnodejson.replace("sub", "");
+                                            var postion1 = "";
+                                            var positionBox1 = [];
+                                            if (!jQuery('#idnode' + newnodejson).length) {
+                                                positionBox1 = [0, 0];
+                                            } else {
+                                                postion1 = jQuery('#idnode' + newnodejson).attr("transform").replace("translate(", "");
+                                                postion1 = postion1.replace(")", "");
+                                                positionBox1 = postion1.split(",");
+                                            }
+                                            var positionBox2 = [];
+                                            if (!jQuery('#idnode' + val.sub).length) {
+                                                positionBox2 = [0, 0];
+                                            } else {
+                                                postion1 = jQuery('#idnode' + val.sub).attr("transform").replace("translate(", "");
+                                                postion1 = postion1.replace(")", "");
+                                                positionBox2 = postion1.split(",");
+                                            }
+                                            var testsubs1 = jQuery('#Title' + val.sub).attr("transform");
+                                            testsubs1 = testsubs1.replace("rotate(", "");
+                                            testsubs1 = testsubs1.replace(")", "");
+                                            var ygran = 0, xgran = 0;
+                                            if(testsubs1==90){
+                                                if (positionBox2[0] > positionBox1[0]) {
+                                                    ygran = 80;
+                                                }else{
+                                                    ygran = -80;
+                                                }
+                                                if(positionBox1[0]==0)
+                                                    ygran = 20;
+                                            }else if(testsubs1==-90){
+                                                if (positionBox2[0] > positionBox1[0]) {
+                                                    ygran = 80;
+                                                }else{
+                                                    ygran = -80;
+                                                }
+                                                if(positionBox1[0]==0)
+                                                    ygran = -20;
+                                            }else if(testsubs1==0) {
+                                                if (positionBox2[1] > positionBox1[1]) {
+                                                    xgran = 80;
+                                                }else{
+                                                    xgran = -80;
+                                                }
+                                                if(positionBox1[1]==0)
+                                                    xgran = -20;
+                                            }else if(testsubs1==180){
+                                                if (positionBox2[1] > positionBox1[1]) {
+                                                    xgran = 80;
+                                                }else{
+                                                    xgran = -80;
+                                                }
+                                                if(positionBox1[1]==0)
+                                                    xgran = 20;
+                                            }
+                                            val.x =  parseFloat(jQuery('#idnode'+value.source).attr("cx"))+ +ygran*(i+1);
+                                            val.y =  parseFloat(jQuery('#idnode'+value.source).attr("cy"))+ +xgran*(i+1);
+                                            val.px = val.x;
+                                            val.py = val.y;
+											ygran = 0 ;xgran = 0 ;
+                                            json.nodes.push(val);
+                                            if ( jQuery.inArray( val.source, nodecks ) == -1 ) {
+											
+                                                clicknodes(i,val);
+                                            }
+                                        }
+                                    });
+
+                                    jQuery.each(response.links, function (i, val) {
+                                        if(!jQuery('.source' + val.source).length) {
+                                            json.links.push(val);
+                                            if ( jQuery.inArray( val.source, nodecks ) == -1 ) {
+                                                clicknodes(i,val);
+                                            }
+                                        } else{
+                                            findAndRemove(json.links, 'namenode', val.namenode);
+                                        }
+                                    });
+                                }
+
+                                function findAndRemove(array, property, value) {
+                                    array.forEach(function (result, index) {
+                                        if (result[property] == value) {
+                                            //Remove from array
+                                            array.splice(index, 1);
+                                        }
+                                    });
+                                }
+                                update(d.source,clickcheck);
+                                jQuery.each(json.nodes, function (key, value) {
+                                    if (json.nodes[key].lv > 1) {
+                                        jQuery("#arrow" + json.nodes[key].id).attr('style', 'display: block');
+                                    }
+                                });
+                                var wids = 0;//jQuery("#polygon" + d.id).attr("width");
+                                
+                            } else {
+                                var wids = jQuery("#polygon" + d.id).attr("width");
+                                if (wids == 138) {
+                                    setwidthheigth(104, 90, "svgpol" + d.id);
+                                    setwidthheigth(104, 90, "polygon" + d.id);
+                                    setwidthheigth(104, 90, "img" + d.id);
+                                    setwidthheigth(104, 90, "img2_" + d.id);
+                                    setwidthheigth(104, 90, "Title" + d.id);
+                                    jQuery("#Title" + d.id).attr("x", "-45px");
+                                    jQuery("#Title" + d.id).attr("y", "-52px");
+                                    jQuery("#svgtext" + d.id).attr("width", "85");
+                                    jQuery("#svgtext" + d.id).attr("height", "97");
+                                    jQuery("#svgtext" + d.id).attr("x", "16");
+                                    jQuery(".tspan_"+ d.id).attr("x",36);
+                                    jQuery(".tspan_"+ d.id).attr("dy",15);
+                                    if(jQuery("#circleWrap" + d.id).attr("y")=="44px"){
+                                        jQuery("#circleWrap" + d.id).attr("y", "34px");
+                                    } else if(jQuery("#circleWrap" + d.id).attr("y")=="42px"){
+                                        jQuery("#circleWrap" + d.id).attr("y", "31px");
+                                    } else if(jQuery("#circleWrap" + d.id).attr("y")=="33px"){
+                                        jQuery("#circleWrap" + d.id).attr("y", "25px");
+                                    } else{
+                                        jQuery("#circleWrap" + d.id).attr("y", "16px");
+                                    }
+                                    jQuery("#circleWrap" + d.id).attr("style", "letter-spacing: 0.17; font-size: 12px; background-image: url('"+ d.bg_image+"');");
+                                    jQuery("#polygon" + d.id).attr("points", "104,45 78,90 26,90 0,45 26,0 78,0");
+                                    setwidthheigth(104, 90, "img3_" + d.id);
+                                    setwidthheigth(104, 90, "img5_" + d.id);
+                                    setwidthheigth(104, 90, "img4_" + d.id);
+                                    setwidthheigth(104, 90, "img6_" + d.id);
+                                    setwidthheigth(104, 90, "polygon2_" + d.id);
+                                    setwidthheigth(104, 90, "polygon3_" + d.id);
+                                    jQuery("#img_icon" + d.id).attr("x", "32");
+                                    jQuery("#img_icon" + d.id).attr("y", "15");
+                                    jQuery("#img_icon"+ d.id).attr("height","20px");
+                                    jQuery("#img_icon"+ d.id).attr("width","40px");
+                                    jQuery("#img4_" + d.id).attr("width", "104");
+                                    jQuery("#img4_" + d.id).attr("height", "90");
+                                    jQuery("#img6_" + d.id).attr("width", "104");
+                                    jQuery("#img6_" + d.id).attr("height", "90");
+                                    jQuery("#img4_" + d.id).attr("x", "0");
+                                    jQuery("#img4_" + d.id).attr("y", "0");
+                                    jQuery("#polygon2_" + d.id).attr("points", "100,45 76,87 28,87 4,45 28,3 76,3");
+                                    jQuery("#polygon3_" + d.id).attr("points", "100,45 76,87 28,87 4,45 28,3 76,3");
+                                } else if (wids == 104 || d.sub==-1) {
+                                    setwidthheigth(138, 120, "svgpol" + d.id);
+                                    setwidthheigth(138, 120, "polygon" + d.id);
+                                    setwidthheigth(138, 120, "img" + d.id);
+                                    setwidthheigth(138, 120, "img2_" + d.id);
+                                    setwidthheigth(138, 120, "Title" + d.id);
+                                    jQuery("#Title" + d.id).attr("x", "-60px");
+                                    jQuery("#Title" + d.id).attr("y", "-69px");
+                                    jQuery("#svgtext" + d.id).attr("width", "125");
+                                    jQuery("#svgtext" + d.id).attr("height", "140");
+                                    jQuery("#svgtext" + d.id).attr("x", "19");
+                                    jQuery(".tspan_"+ d.id).attr("x",50);
+                                    jQuery(".tspan_"+ d.id).attr("dy",20);
+                                    if(jQuery("#circleWrap" + d.id).attr("y")=="34px" || d.sub==-1){
+                                        jQuery("#circleWrap" + d.id).attr("y", "44px");
+                                    }else if(jQuery("#circleWrap" + d.id).attr("y")=="31px"){
+                                        jQuery("#circleWrap" + d.id).attr("y", "42px");
+                                    }else if(jQuery("#circleWrap" + d.id).attr("y")=="25px"){
+                                        jQuery("#circleWrap" + d.id).attr("y", "33px");
+                                    } else {
+                                        jQuery("#circleWrap" + d.id).attr("y", "21px");
+                                    }
+                                    jQuery("#circleWrap" + d.id).attr("style", "letter-spacing: 0.17; font-size: 16.5px; background-image: url('"+ d.bg_image+"');");
+                                    jQuery("#polygon" + d.id).attr("points", "138,60 103,120 35,120 0,60 35,0 103,0");
+                                    setwidthheigth(138, 120, "img3_" + d.id);
+                                    setwidthheigth(138, 120, "img5_" + d.id);
+                                    setwidthheigth(138, 120, "img4_" + d.id);
+                                    setwidthheigth(138, 120, "img6_" + d.id);
+                                    setwidthheigth(138, 120, "polygon2_" + d.id);
+                                    setwidthheigth(138, 120, "polygon3_" + d.id);
+                                    jQuery("#img_icon" + d.id).attr("x", "42");
+                                    jQuery("#img_icon" + d.id).attr("y", "17");
+                                    jQuery("#img_icon"+ d.id).attr("height","35px");
+                                    jQuery("#img_icon"+ d.id).attr("width","55px");
+                                    jQuery("#img4_" + d.id).attr("x", "0");
+                                    jQuery("#img4_" + d.id).attr("y", "0");
+                                    jQuery("#img4_" + d.id).attr("width", "138");
+                                    jQuery("#img4_" + d.id).attr("height", "120");
+                                    jQuery("#img6_" + d.id).attr("width", "138");
+                                    jQuery("#img6_" + d.id).attr("height", "120");
+                                    jQuery("#polygon2_" + d.id).attr("points", "134,60 101,117 37,117 4,60 37,3 101,3");
+                                    jQuery("#polygon3_" + d.id).attr("points", "134,60 101,117 37,117 4,60 37,3 101,3");
+                                }
+
+                                if (d.value == 1) {
+                                    if (!jQuery('.contentrow' + d.id).length) {
+                                        curentNode[d.id] = jQuery(node[0][keys]);
+                                        var postion = jQuery(node[0][keys]).attr("transform");
+                                        var classinfo="info-box";
+                                        if(d.info=="")
+                                            classinfo = "infoboxmin";
+                                        var htmlText;
+                                        htmlText = "<div class='text-title'><p style='line-height: 140%; font-weight: 600; font-size: 19px; font-family: Kanit; width: 90%;word-wrap: break-word;'>" + d.title + "</p></div>";
+                                        htmlText += " <a class='right close-box' style='margin-top: -37px; margin-right: 6px;' href='#' onClick='closeBox(\"" + d.id + "\"); return false;'>";
+                                        htmlText += "<i class='fa fa-times fa-6' style='font-size: 2em; color: white;'></i>";
+                                        htmlText += "</a>";
+                                        htmlText += "<div class='clear main-info zoomContainer' id='article2-"+d.id+"'  datascroll='0' style='color: #000;'>";
+                                        htmlText += d.info;
+                                        htmlText += "<div>";
+                                        jQuery("#info-box").append("<div id='contentrow" + d.id + "' class='"+classinfo+" contentrow" + d.id + "' data-angle=\"0\">" + htmlText + "</div>");
+                                                        
+                                        jQuery("#info-box .zoomContainer").append('<img src="https://frontify.com/assets/img/logo.svg">');
+                                        jQuery("#info-box .zoomContainer img").addClass('zoomTarget');
+                                                        
+                                        $("#info-box .zoomContainer img").panzoom({
+                                                                contain: false,
+                                                                minScale: 1,
+                                                                maxScale: 3,
+                                                                increment: 3,
+                                                                disablePan: true
+                                        });
+										
+                                        postion = postion.replace("translate(", "");
+                                        postion = postion.replace(")", "");
+                                        var positionBox = postion.split(",");
+                                        positionBox[0] = positionBox[0] + 40;
+                                        var testsubs = jQuery('#Title' + d.id).attr("transform");
+                                        testsubs = testsubs.replace("rotate(", "");
+                                        testsubs = testsubs.replace(")", "");
+                                        var transformnews;
+                                        transformnews = "transform: scale(1) rotate("+testsubs+"deg);";
+                                        jQuery(".source" + d.source).attr("style", "display: block");
+                                        var positionBox1 = [];
+                                        if (!jQuery('#idnode' + d.sub).length) {
+                                            positionBox1 = [0, 0];
+                                        } else {
+                                            postion1 = jQuery('#idnode' + d.sub).attr("transform").replace("translate(", "");
+                                            postion1 = postion1.replace(")", "");
+                                            positionBox1 = postion1.split(",");
+                                        }
+                                        var checktop = 0;
+										pointnodex[d.id] = positionBox[0];
+                                        pointnodey[d.id] = positionBox[1];
+                                        if (positionBox1[1] > positionBox[1]) {
+                                            positionBox[1] = positionBox[1] - 280;
+                                            checktop = positionBox[1];
+                                        } else {
+                                            checktop = +positionBox[1] + +70;
+                                        }
+                                        if (positionBox1[0] > positionBox[0] - 40) {
+                                            positionBox[0] = positionBox[0] - 385;
+                                        }
+										
+										var conx = 0;
+										var cony = 0;
+										
+										var idMainNode = mainnode=jQuery('#svgpol'+d.id).attr('mainnonds');
+										
+										//var idMainNode = jQuery("#arrow"+d.id).attr("class");
+										idMainNode = parseFloat(idMainNode);
+										var xmainnode = jQuery("#idnode"+idMainNode).attr("cx");
+										var ymainnode = jQuery("#idnode"+idMainNode).attr("cy");
+										
+										
+										if(ymainnode < height/2)
+										{
+											cony = 20;
+										}
+										else
+										{
+											cony = height-((height/2.34));
+										}
+										if(xmainnode < width/2)
+										{
+											conx = 20;
+										}
+										else
+										{
+											conx = width-420;
+										}
+										//cony = 20;
+										cony = height-((height/2.34));
+										
+										
+                                        jQuery('.contentrow' + d.id).attr("style", "left:" + conx + "px;top:" + cony + "px;" + transformnews);
+										jQuery('.contentrow' + d.id).attr("data-rotate",testsubs);
+                                        jQuery('.contentrow' + d.id).show("slow");
+										var myElement = document.getElementById('article-'+ d.id);
+                                        var mc = new Hammer(myElement);
+                                        mc.get('pan').set({direction: Hammer.DIRECTION_ALL});
+                                        mc.on("panleft panright panup pandown", function (ev) {
+                                            var scrollTop = 10;
+                                            if (typeof $('.contentrow'+ d.id).val() !== 'undefined') {
+                                                var rotate = $('.contentrow'+ d.id).attr('style');
+                                                rotate = rotate.substr(rotate.indexOf('rotate('));
+                                                rotate = rotate.substr(rotate.indexOf('(') + 1, rotate.indexOf('deg);'));
+                                                rotate = parseFloat(rotate);
+                                            } else {
+                                                rotate = 0;
+                                            }
+											var rotatesase=0;
+                                            if((rotate>=-45 && rotate <= 45) || rotate>=316 || rotate<=-316){
+                                                rotatesase = 0;
+                                            }else if((rotate>=136 && rotate<=255) || (rotate<=-136 && rotate>=-255)){
+                                                rotatesase = 180;
+                                            }else if((rotate>=46 && rotate<=135) || (rotate<=-226 && rotate>=-315)){
+                                                rotatesase = 90;
+                                            }else if((rotate<=-46 && rotate>=-135) || (rotate>=226 && rotate<=315)){
+                                                rotatesase = -90;
+                                            }
+                                            switch (rotatesase) {
+                                                default:
+                                                case 0:
+                                                    switch (ev.type) {
+                                                        case 'panleft':
+
+                                                            break;
+                                                        case 'panright':
+
+                                                            break;
+                                                        case 'panup':
+                                                                if($('#article-'+ d.id)[0].scrollHeight <= parseFloat($('#article2-'+ d.id).attr('datascroll'))){
+                                                                    $('#article-'+ d.id).scrollTop(parseFloat($('#article-'+ d.id)[0].scrollHeight));
+                                                                    $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article-'+ d.id)[0].scrollHeight));
+                                                                }else{
+                                                                    $('#article-'+ d.id).scrollTop(parseFloat($('#article2-'+ d.id).attr('datascroll'))+scrollTop);
+                                                                    $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article2-'+ d.id).attr('datascroll'))+scrollTop);
+                                                                }
+                                                            break;
+                                                        case 'pandown':
+                                                                if(parseFloat($('#article2-'+ d.id).attr('datascroll')) <= 0) {
+                                                                    $('#article-'+ d.id).scrollTop(0);
+                                                                    $('#article2-'+ d.id).attr('datascroll',0);
+                                                                } else {
+                                                                    $('#article-'+ d.id).scrollTop(parseFloat($('#article2-'+ d.id).attr('datascroll')) - scrollTop);
+                                                                    $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article2-'+ d.id).attr('datascroll')) - scrollTop);
+                                                                }
+                                                            break;
+                                                    }
+                                                    break;
+                                                case 180:
+                                                    switch (ev.type) {
+                                                        case 'panleft':
+                                                            break;
+                                                        case 'panright':
+
+                                                            break;
+                                                        case 'panup':
+                                                            if(parseFloat($('#article2-'+ d.id).attr('datascroll')) <= 0) {
+                                                                $('#article-'+ d.id).scrollTop(0);
+                                                                $('#article2-'+ d.id).attr('datascroll',0);
+                                                            } else {
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article2-'+ d.id).attr('datascroll')) - scrollTop);
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article2-'+ d.id).attr('datascroll')) - scrollTop);
+                                                            }
+                                                            break;
+                                                        case 'pandown':
+                                                            if($('#article-'+ d.id)[0].scrollHeight <= parseFloat($('#article2-'+ d.id).attr('datascroll'))){
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article-'+ d.id)[0].scrollHeight));
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article-'+ d.id)[0].scrollHeight));
+                                                            }else{
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article2-'+ d.id).attr('datascroll'))+scrollTop);
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article2-'+ d.id).attr('datascroll'))+scrollTop);
+                                                            }
+                                                            break;
+                                                    }
+                                                    break;
+                                                case 90:
+                                                    switch (ev.type) {
+                                                        case 'panleft':
+                                                            if(parseFloat($('#article2-'+ d.id).attr('datascroll')) <= 0) {
+                                                                $('#article-'+ d.id).scrollTop(0);
+                                                                $('#article2-'+ d.id).attr('datascroll',0);
+                                                            } else {
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article2-'+ d.id).attr('datascroll')) - scrollTop);
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article2-'+ d.id).attr('datascroll')) - scrollTop);
+                                                            }
+                                                            break;
+                                                        case 'panright':
+                                                            
+															if($('#article-'+ d.id)[0].scrollHeight <= parseFloat($('#article2-'+ d.id).attr('datascroll'))){
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article-'+ d.id)[0].scrollHeight));
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article-'+ d.id)[0].scrollHeight));
+                                                            }else{
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article2-'+ d.id).attr('datascroll'))+scrollTop);
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article2-'+ d.id).attr('datascroll'))+scrollTop);
+                                                            }
+                                                            break;
+                                                        case 'panup':
+                                                            break;
+                                                        case 'pandown':
+                                                            break;
+                                                    }
+                                                    break;
+                                                case -90:
+                                                    switch (ev.type) {
+                                                        case 'panleft':
+                                                            if($('#article-'+ d.id)[0].scrollHeight <= parseFloat($('#article2-'+ d.id).attr('datascroll'))){
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article-'+ d.id)[0].scrollHeight));
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article-'+ d.id)[0].scrollHeight));
+                                                            }else{
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article2-'+ d.id).attr('datascroll'))+scrollTop);
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article2-'+ d.id).attr('datascroll'))+scrollTop);
+                                                            }
+                                                            break;
+                                                        case 'panright':
+                                                            
+															if(parseFloat($('#article2-'+ d.id).attr('datascroll')) <= 0) {
+                                                                $('#article-'+ d.id).scrollTop(0);
+                                                                $('#article2-'+ d.id).attr('datascroll',0);
+                                                            } else {
+                                                                $('#article-'+ d.id).scrollTop(parseFloat($('#article2-'+ d.id).attr('datascroll')) - scrollTop);
+                                                                $('#article2-'+ d.id).attr('datascroll',parseFloat($('#article2-'+ d.id).attr('datascroll')) - scrollTop);
+                                                            }
+                                                            break;
+                                                        case 'panup':
+                                                            break;
+                                                        case 'pandown':
+                                                            break;
+                                                    }
+                                                    break;
+                                            }
+                                        });
+                                        var angle = parseFloat(testsubs);
+                                        var scale = 1;
+                                        var scriptsTexts = " ";
+                                        scriptsTexts += " var trans = document.getElementsByClassName('contentrow"+d.id+"');";
+                                        scriptsTexts += "var tra = new Hammer(trans);";
+                                        scriptsTexts += "tra.get('rotate').set({enable: true }); tra.get('pinch').set({enable: true });";
+                                        scriptsTexts += "tra.on('rotate pinch', function(event) {";
+										scriptsTexts += "    olerotate = jQuery('.contentrow"+d.id+"').attr('data-rotate');";
+                                        scriptsTexts += "    angle = event.rotation; var scale=1; if(event.scale>1.4) scale=1.4; else if(event.scale<0.5) scale = 0.5; else scale=event.scale;";
+										//scriptsTexts += "    var scale=1; if(event.scale>1.4) scale=1.4; else if(event.scale<0.5) scale = 0.5; else scale=event.scale;";
+                                        scriptsTexts += "    var arrow = document.getElementsByClassName('contentrow"+d.id+"');";
+                                        scriptsTexts += "    arrow.style.transform = 'scale('+scale+') rotate(' + angle + 'deg)';";
+                                        scriptsTexts += "    jQuery('.contentrow"+d.id+"').attr('transform','scale('+scale+') rotate(' + angle + 'deg)');";
+                                        scriptsTexts += "    jQuery('.contentrow"+d.id+"').attr('data-rotate',angle);";
+                                        scriptsTexts += "document.cookie='contentrow" + d.id + "=transform:'+arrow.style.webkitTransform+';';";
+                                        scriptsTexts += " });";
+                                        eval(scriptsTexts);
+                                    } else {
+                                        document.cookie = "contentrow"+d.id + "=transform: scale(1) rotate(0deg);";
+                                        document.cookie = "titlerotate"+d.id + "=transform: scale(1) rotate(0deg);";
+                                        closeBox(d.id);
+                                    }
+                                } else {
+                                    if (jQuery(".source" + d.source).attr("style") == "display: block" || jQuery(".source" + d.source).attr("style") == '') {
+                                        if (jQuery(".sub" + d.source).attr("style") == "display: block") {
+                                            if (d.lv > 0)
+                                                jQuery(".source" + d.source).attr("style", "display: block");
+                                            document.cookie = d.id + "=transform: scale(1) rotate(0deg);";
+                                            closeBox(d.id);
+                                        } else {
+                                            changesize(90,104, d.id);
+                                        }
+                                    } else {
+                                        changesize(90,104, d.id);
+                                    }
+                                }
+                            }
+						}
+                        });
+                    };
+                    var wrap = {};
+                    jQuery('.wrap').each(function (index, value) {
+                        if(jQuery(this).attr('width')==138) {
+                            jQuery("#"+jQuery(this).attr('width')).attr("style","font-size: 22px; background-image: url('"+ json.nodes[key].bg_image+"');");
+                        }
+                    });
+
+					function setwidthheigth(width, height, id) {
+						jQuery("#" + id).attr("width", width);
+						jQuery("#" + id).attr("height", height);
+					};
+
+					force.on("tick", function (e) {
+						var q = d3.geom.quadtree(node), i = 0, n = node.length;
+						force.resume(50).start();
+						while (++i < n) {
+							q.visit(collide(node[i]));
+						}
+						
+						svg.selectAll("g")
+								.attr("cx", function (d) {
+									return d.x;
+								})
+								.attr("cy", function (d) {
+									return d.y;
+								});
+								
+                        //config x,y not out screen
+                        node.attr("transform", function (d) {
+                            var testsubs = jQuery('#Title' + d.id).attr("transform");
+                            testsubs = testsubs.replace("rotate(", "");
+                            testsubs = testsubs.replace(")", "");
+                           /* if((testsubs%10)==0 && d.sub==-1){
+                                if(d.y<(height/2))
+                                    jQuery('#Title' + d.id).attr("transform", "rotate(180)");
+                                else if(d.y>(height/2))
+                                    jQuery('#Title' + d.id).attr("transform", "rotate(0)");
+                            } else if((testsubs%10)==0) {
+                                var mainrota = jQuery('#Title' + d.sub).attr("transform");
+                                jQuery('#Title' + d.id).attr("transform", mainrota);
+                            }*/
+
+                            if(jQuery("#svgtext"+ d.id).attr("width")==85)
+                            {
+                                jQuery(".tspan_"+ d.id).attr("x",36);
+                                jQuery(".tspan_"+ d.id).attr("dy",15);
+                            }else{
+                                jQuery(".tspan_"+ d.id).attr("x",50);
+                                jQuery(".tspan_"+ d.id).attr("dy",20);
+                            }
+
+                            if (d.x < width - 80 && d.x > 80) {
+                                dx = d.x;
+                            } else if (d.x <= 80) {
+                                dx = 81;
+                            } else {
+                                dx = width - 81;
+                            }
+
+                            if (d.y < height - 60 && d.y > 60) {
+                                dy = d.y;
+                            } else if (d.y <= 60) {
+                                dy = 61;
+                            } else {
+                                dy = height - 61;
+                            }
+							
+							
+							
+							//if(jQuery(".contentrow"+ d.id).length){
+							//		if(json.nodes[d.index].px-pointnodex[d.id] > 10 || json.nodes[d.index].px-pointnodex[d.id] < -10 || json.nodes[d.index].py-pointnodey[d.id] > 10 || json.nodes[d.index].py-pointnodey[d.id] < -10){
+							//			pointnodex[d.id] = json.nodes[d.index].px;
+							//			pointnodey[d.id] = json.nodes[d.index].py;
+							//			return "translate(" + dx + "," + dy + ")";
+							//		}
+                            //        json.nodes[d.index].px = pointnodex[d.id];
+                            //        json.nodes[d.index].py = pointnodey[d.id];
+                            //        json.nodes[d.index].x = pointnodex[d.id];
+                            //        json.nodes[d.index].y = pointnodey[d.id];
+                            //        return "translate(" + pointnodex[d.id] + "," + pointnodey[d.id] + ")";
+                           // }  else
+								return "translate(" + dx + "," + dy + ")";
+                        });
+
+                        link.attr("x1", function (d) {
+                                    if (jQuery("#idnode"+ d.source).attr("cx") < width - 80 && jQuery("#idnode"+ d.source).attr("cx") > 80) {
+                                        dx = jQuery("#idnode"+ d.source).attr("cx");
+                                    }
+                                    else if (jQuery("#idnode"+ d.source).attr("cx") <= 80) {
+                                        dx = 81;
+                                    }
+                                    else {
+                                        dx = width - 81;
+                                    }
+                                    return dx;
+                                })
+                                .attr("y1", function (d) {
+                                    if (jQuery("#idnode"+ d.source).attr("cy") < height - 60 && jQuery("#idnode"+ d.source).attr("cy") > 60) {
+                                        dy = jQuery("#idnode"+ d.source).attr("cy");
+                                    }
+                                    else if (jQuery("#idnode"+ d.source).attr("cy") <= 60) {
+                                        dy = 61;
+                                    }
+                                    else {
+                                        dy = height - 61;
+                                    }
+                                    return dy;
+                                })
+                                .attr("x2", function (d) {
+                                    if (jQuery("#idnode"+ d.target).attr("cx") < width - 80 && jQuery("#idnode"+ d.target).attr("cx") > 80) {
+                                        dx = jQuery("#idnode"+ d.target).attr("cx");
+                                    }
+                                    else if (jQuery("#idnode"+ d.target).attr("cx") <= 80) {
+                                        dx = 81;
+                                    }
+                                    else {
+                                        dx = width - 81;
+                                    }
+									//if(jQuery(".contentrow"+ d.target).length)
+                                   //     return pointnodex[d.target];
+                                   // else
+										return dx;
+                                })
+                                .attr("y2", function (d) {
+                                    if (jQuery("#idnode"+ d.target).attr("cy") < height - 60 && jQuery("#idnode"+ d.target).attr("cy") > 60) {
+                                        dy = jQuery("#idnode"+ d.target).attr("cy");
+                                    }
+                                    else if (jQuery("#idnode"+ d.target).attr("cy") <= 60) {
+                                        dy = 61;
+                                    }
+                                    else {
+                                        dy = height - 61;
+                                    }
+									//if(jQuery(".contentrow"+ d.target).length)
+                                   //     return pointnodey[d.target];
+                                   // else
+										return dy;
+                                });
+
+						if (curentNode) {
+                            jQuery.each(curentNode, function (index, value) {
+								var postion = curentNode[index].attr("transform");
+                                var postion1;
+                                postion = postion.replace("translate(", "");
+                                postion = postion.replace(")", "");
+                                var positionBox = postion.split(",");
+                                positionBox[0] = parseFloat(positionBox[0])+20;
+                                positionBox[1] = parseFloat(positionBox[1]);
+								var positionBox1 = [];
+								if (!jQuery('#idnode' + value[0]['__data__'].sub).length) {
+									positionBox1 = [0, 0];
+								}
+								else {
+									postion1 = jQuery('#idnode' + value[0]['__data__'].sub).attr("transform");
+									postion1 = postion1.replace("translate(", "");
+									postion1 = postion1.replace(")", "");
+
+									positionBox1 = postion1.split(",");
+								}
+								var checktop = 0;
+
+                                if( jQuery(".contentrow"+value[0]['__data__'].source).attr("class")=="infoboxmin")
+                                {
+                                    var rotcontents = jQuery("#Title"+value[0]['__data__'].source).attr("transform");
+                                    rotcontents = rotcontents.replace("rotate(", "");
+                                    rotcontents = rotcontents.replace(")", "");
+                                    rotcontents = parseFloat(rotcontents);
+                                    if(rotcontents==0 || rotcontents== 180) {
+                                        if (positionBox1[1] > positionBox[1]) {
+                                            positionBox[1] = positionBox[1];
+                                            checktop = positionBox[1] + +70;
+                                            if (checktop > height - 280) {
+                                                checktop = checktop - 185;
+                                            }
+                                        } else {
+                                            checktop = +positionBox[1] + +70;
+                                            if (checktop > height - 280) {
+                                                checktop = checktop - 185;
+                                            }
+                                        }
+                                        if (checktop < 85 || positionBox[1] < 85 && positionBox1[1] > positionBox[1] &&rotcontents!=180 ) {
+                                            checktop = positionBox[1] + +280;
+                                        }
+                                        if (positionBox1[0] > positionBox[0] - 40) {
+                                            positionBox[0] = positionBox[0] - 385;
+                                        }
+                                        if(positionBox[0]<5) {
+                                            positionBox[0] = positionBox[0] + + 385;
+                                        } else if(positionBox[0]==80){
+                                            positionBox[0]=80;
+                                        } else if(positionBox[0]>width-345){
+                                            positionBox[0] = positionBox[0] - 385;
+                                        }
+                                    } else if(rotcontents==90 || rotcontents==-90) {
+                                        if (positionBox1[1] > positionBox[1]) {
+                                            positionBox[1] = positionBox[1];
+                                            checktop = positionBox[1] + +150;
+                                            if (checktop > height - 280) {
+                                                checktop = checktop - 360;
+                                            }
+                                        } else {
+                                            checktop = +positionBox[1] + +150;
+                                            if (checktop > height - 280) {
+                                                checktop = checktop - 360;
+                                            }
+                                        }
+                                        if (checktop < 85 || positionBox[1] < 85 && positionBox1[1] > positionBox[1]) {
+                                            checktop = positionBox[1] + +160;
+                                        }
+                                        if (positionBox1[0] > positionBox[0] - 40) {
+                                            positionBox[0] = positionBox[0] - 280;
+                                        } else {
+                                            positionBox[0] = positionBox[0] - 100;
+                                        }
+                                        if(positionBox[0]<5)
+                                        {
+                                            positionBox[0] = positionBox[0] + + 180;
+                                        } else if(positionBox[0]==80){
+                                            positionBox[0]=80;
+                                        } else if(positionBox[0]>width-345){
+                                            positionBox[0] = positionBox[0] - 180;
+                                        }
+                                    }
+                                }else{
+                                    if (positionBox1[1] > positionBox[1]) {
+                                        positionBox[1] = positionBox[1] - 280;
+                                        checktop = positionBox[1];
+                                        if (checktop > height-280) {
+                                            checktop = checktop - 350;
+                                        }
+                                    } else {
+                                        checktop = +positionBox[1] + +70;
+                                        if (checktop > height - 280) {
+                                            checktop = checktop - 350;
+                                        }
+                                    }
+                                    if(checktop < 85 || positionBox[1]< 85 && positionBox1[1] > positionBox[1])
+                                        checktop = positionBox[1]+ +345;
+                                    if (positionBox1[0] > positionBox[0] - 40) {
+                                        positionBox[0] = positionBox[0] - 385;
+                                    }
+                                    if(positionBox[0]<5) {
+                                        positionBox[0] = positionBox[0] + + 385;
+                                    } else if(positionBox[0]==80){
+                                        positionBox[0]=80;
+                                    } else if(positionBox[0]>width-345){
+                                        positionBox[0] = positionBox[0] - 385;
+                                    }
+                                }
+                                var testsubs = jQuery('#Title' + jQuery(curentNode[index][0]).attr('consten')).attr("transform");
+                                testsubs = testsubs.replace("rotate(", "");
+                                testsubs = testsubs.replace(")", "");
+                                var transform = getCookie("contentrow"+index);
+                                if (transform == ""){
+                                    transform = "transform: scale(1) rotate("+testsubs+"deg);";
+                                } else {
+
+                                    var cgs = transform.split("scale(")[1];
+                                    cgs = cgs.replace(")", "");
+                                    var numcgs = cgs.lastIndexOf("rotate");
+                                    cgs = cgs.substring(0, numcgs-1);
+                                    var scanoles = parseFloat(cgs);
+                                    transform = transform.split("rotate(")[1];
+                                    transform = transform.replace("deg)", "");
+                                    var ckrotate = jQuery('#Title' + index).attr("transform");
+                                    ckrotate = ckrotate.replace("rotate(", "");
+                                    ckrotate = ckrotate.replace(")", "");
+                                    var chrotate2;
+                                    chrotate2=getCookie("titlerotate"+index);
+                                    if(!chrotate2)
+                                        chrotate2=0;
+                                     var dataro
+                                    if(ckrotate==chrotate2){
+                                        dataro = transform;
+                                        transform = "transform: scale("+scanoles+") rotate("+transform+"deg);";
+                                    } else {
+                                        dataro = testsubs;
+                                        transform = "transform: scale("+scanoles+") rotate("+testsubs+"deg);";
+                                    }
+									var heicontent = height/2.45;
+									var hriboxcon = height/2.71;
+									
+									var square = document.getElementById("article-"+value[0]['__data__'].id);
+									
+									if(square!=null){
+										square.style.height = hriboxcon+"px";
+										square = document.getElementById("contentrow"+value[0]['__data__'].id);
+										square.style.height = heicontent+"px";
+									}
+                                }
+                                document.cookie = "contentrow"+index + "="+transform;
+                                document.cookie = "titlerotate"+index + "="+ckrotate;
+								
+								
+								
+								
+                               // jQuery('.contentrow' + index).attr("style", "left:" + positionBox[0] + "px;top:" + checktop + "px;" + transform);
+							//jQuery('.contentrow' + index).attr("data-rotate",dataro);
+							});
+						}
+					});
+
+                    function collide(node) {
+                        var r = node.radius + 16,
+                                nx1 = node.x - r,
+                                nx2 = node.x + r,
+                                ny1 = node.y - r,
+                                ny2 = node.y + r;
+                        return function(quad, x1, y1, x2, y2) {
+                            if (quad.point && (quad.point !== node)) {
+                                var x = node.x - quad.point.x,
+                                        y = node.y - quad.point.y,
+                                        l = Math.sqrt(x * x + y * y),
+                                        r = node.radius + quad.point.radius;
+                                if (l < r) {
+                                    l = (l - r) / l * .5;
+                                    node.x -= x *= l;
+                                    node.y -= y *= l;
+                                    quad.point.x += x;
+                                    quad.point.y += y;
+                                }
+                            }
+                            return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+                        };
+                    }
+					
+				});
+				
+			}	
+
+			function getCookie(cname) {
+				var name = cname + "=";
+				var ca = document.cookie.split(';');
+				for(var i=0; i<ca.length; i++) {
+					var c = ca[i];
+					while (c.charAt(0)==' ') c = c.substring(1);
+					if (c.indexOf(name) == 0) {
+						return c.substring(name.length, c.length);
+					}
+				}
+				return "";
+			}
+			
+
+            function setwidthheigth(width, height, id) {
+                jQuery("#" + id).attr("width", width);
+                jQuery("#" + id).attr("height", height);
+            };
+
+			function closeBox(infoID){
+                document.cookie = "titlerotate" + infoID + "=transform: scale(1) rotate(0deg);";
+				document.cookie = "contentrow" + infoID + "=transform: scale(1) rotate(0deg);";
+                jQuery('.contentrow'+infoID).remove();
+                setwidthheigth(104, 90, "svgpol" + infoID);
+                setwidthheigth(104, 90, "polygon" + infoID);
+                setwidthheigth(104, 90, "img" + infoID);
+                setwidthheigth(104, 90, "img2_" + infoID);
+                setwidthheigth(104, 90, "Title" + infoID);
+                jQuery("#Title" + infoID).attr("x", "-45px");
+                jQuery("#Title" + infoID).attr("y", "-52px");
+                jQuery("#svgtext" + infoID).attr("width", "85");
+                jQuery("#svgtext" + infoID).attr("height", "97");
+                jQuery("#svgtext" + infoID).attr("x", "16");
+                jQuery(".tspan_"+ infoID).attr("x",36);
+                jQuery(".tspan_"+ infoID).attr("dy",15);
+
+                if(jQuery("#circleWrap" + infoID).attr("y")=="44px"||jQuery("#circleWrap" + infoID).attr("y")=="34px"){
+                    jQuery("#circleWrap" + infoID).attr("y", "34px");
+                }else if(jQuery("#circleWrap" + infoID).attr("y")=="42px"||jQuery("#circleWrap" + infoID).attr("y")=="31px"){
+                    jQuery("#circleWrap" + infoID).attr("y", "31px");
+                }else if(jQuery("#circleWrap" + infoID).attr("y")=="33px"||jQuery("#circleWrap" + infoID).attr("y")=="25px"){
+                    jQuery("#circleWrap" + infoID).attr("y", "25px");
+                } else{
+                    jQuery("#circleWrap" + infoID).attr("y", "16px");
+                }
+                jQuery("#circleWrap" + infoID).attr("style", "letter-spacing: 0.17; font-size: 12px; background-image: url('');");
+                jQuery("#polygon" + infoID).attr("points", "104,45 78,90 26,90 0,45 26,0 78,0");
+                setwidthheigth(104, 90, "img3_" + infoID);
+                setwidthheigth(104, 90, "img5_" + infoID);
+                setwidthheigth(104, 90, "img4_" + infoID);
+                setwidthheigth(104, 90, "img6_" + infoID);
+                setwidthheigth(104, 90, "polygon2_" + infoID);
+                setwidthheigth(104, 90, "polygon3_" + infoID);
+                jQuery("#img4_" + infoID).attr("width", "104");
+                jQuery("#img4_" + infoID).attr("height", "90");
+                jQuery("#img4_" + infoID).attr("x", "0");
+                jQuery("#img4_" + infoID).attr("y", "0");
+                jQuery("#img6_" + infoID).attr("width", "104");
+                jQuery("#img6_" + infoID).attr("height", "90");
+                jQuery("#img_icon" + infoID).attr("x", "32");
+                jQuery("#img_icon" + infoID).attr("y", "15");
+                jQuery("#img_icon"+ infoID).attr("height","20px");
+                jQuery("#img_icon"+ infoID).attr("width","40px");
+                jQuery("#polygon2_" + infoID).attr("points", "100,45 76,87 28,87 4,45 28,3 76,3");
+                jQuery("#polygon3_" + infoID).attr("points", "100,45 76,87 28,87 4,45 28,3 76,3");
+			}
+			function disableselect(e){
+				return false
+			}
+			function reEnable(){
+				return true
+			}
+			document.onselectstart=new Function ("return false")
+			if (window.sidebar){
+				document.onmousedown=disableselect
+				document.onclick=reEnable
+			}
+		</script>
+        <script>
+            function clickIE() {if (document.all) {return false;}}
+            function clickNS(e) {if
+            (document.layers||(document.getElementById&&!document.all)) {
+                if (e.which==2||e.which==3) {return false;}}}
+            if (document.layers)
+            {document.captureEvents(Event.MOUSEDOWN);document.onmousedown=clickNS;}
+            else{document.onmouseup=clickNS;document.oncontextmenu=clickIE;}
+            document.oncontextmenu=new Function("return false")
+        </script>
+        <script>
+            $( document ).on( "click", function( event ) {
+                if(restY==""&&restX==""){
+                    restY = event.pageY;
+                    restX =  event.pageX;
+                }
+                else if(((restY>height-100 && restX<100)  && (event.pageY>height-100&&event.pageX>width-100)) || (event.pageY>height-100 && event.pageX<100)  && (restY>height-100&&restX>width-100)) {
+                    location.reload();
+                }
+                else{
+                    restY = "";
+                    restX =  "";
+                }
+            });
+
+        </script>
+
+        <div id="info-box" ></div>
+
+		<style>
+            .infoboxmin{
+                position:absolute;
+                z-index:900000000;
+                background-color:transparent;
+                background-image:url(images/bg-detail2.png);
+                background-size:100% 100%;
+                width: 350px;
+                height: 38px;
+                border:none;
+                overflow:hidden;
+                color:#FFF;
+            }
+		#info-box{ }
+
+        .info-box{
+			position:absolute;
+			z-index:900000000;
+			background-color:transparent;
+			background-image:url(images/bg-detail2.png);
+			background-size:100% 100%;
+			width: 400px;
+			height: 440px;
+			border:none;
+			overflow:hidden;
+			color:#FFF;
+		}
+		.text-title{
+            text-align:center;
+            padding-top : 9px;
+            width: 100%;
+            word-wrap: break-word;
+            height: 30px;
+            background-image: url(images/bg-title.png);
+            background-size: 100% 100%;
+        }
+		.main-info{ border:none;}
+
+		::-webkit-scrollbar {
+		  width: 6px;  /* for vertical scrollbars */
+		  height: 6px; /* for horizontal scrollbars */
+		}
+
+		::-webkit-scrollbar-track {
+		  background: rgba(0, 0, 0, 0.1);
+		}
+
+		::-webkit-scrollbar-thumb {
+		  background: rgba(0, 0, 0, 0.5);
+		}
+		.main-info{
+		  width:97%;
+		  /*height: 165px;*/
+          height: 100%;
+		  margin: 0 auto;
+		  top: -1px;
+		  position:relative;
+		}
+		.right{ float:right;}
+		.clear{ clear:both;}
+		.close-box{
+		  margin-right: 4px;
+		  margin-top: 2px;
+		}
+        video {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            transform: translateX(-50%) translateY(-50%);
+            background: url('images/bwg.jpg') no-repeat;
+            background-size: cover;
+            transition: 1s opacity;
+        }
+        
+        #back-home{
+            position: absolute;
+            top: 25px;
+            height: 4%;
+            left: 1%;
+            z-index:500;
+        }
+		
+		#ajax-loader{
+			display:none;
+		}
+		
+        </style>
+    <!--    <video autoplay id="bgvid" loop>-->
+       <!--     <source src="images/Background_5.mp4" type="video/mp4">-->
+      <!--  </video>-->
+      <a href="../index-2.html"><img src="images/back-home.png" id="back-home"></a>
+	  
+<div id="flag-box" >
+	<img style="position: absolute;top: calc(50% - 57px);left: calc(50% - 160px);width: 120px;cursor: pointer;" onClick="loadMindmap('TH');" src="images/th-120.png">
+	<img style="position: absolute;top: calc(50% - 57px);right: calc(50% - 160px);width: 120px;cursor: pointer;" onClick="loadMindmap('EN');" src="images/uk-120.png">
+</div>
+<div id="ajax-loader">
+	<img style="position: absolute;top: calc(50% - 38px);left: calc(50% - 38px);width: 76px;" src="images/ajaxloader.gif" />
+	<h3 style="position: absolute;top: calc(60% - 38px);left: calc(50% - 38px);width: 76px; color:white;">Loading...</h3>
+</div>
+	  
+	</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="user-scalable=no, width=768px">
+<title>Untitled Document</title>
+</head>
+
+<script type="text/javascript" src="cordova.js"></script>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<script type="text/javascript" src="js/videoplayer.js"></script>
+
+<script>
+
+document.addEventListener("deviceready", onDeviceReady, false);
+	
+	 function onDeviceReady() {
+	 }
+      
+      function changePage(id){
+          $("#ajax-loader").fadeIn(400);
+          setTimeout(function(){
+          if(id == 1){
+              window.location = 'ar-app/index.html';
+          }else if(id == 2){
+              window.location = 'mindmap/index.html';
+          }else if(id == 3){
+              window.location = 'eBook/index.html';
+          }else if(id == 4){
+              window.location = 'halloffame-mobile/index.html';
+          }
+                     },500);
+      }
+      
+      function playMP4(id) {
+      
+      var video_name = '';
+      
+      if(id == 1){
+      	video_name = 'av1.mp4';
+      }else if(id == 2){
+      	video_name = 'av2.mp4';
+      }else if(id == 3){
+      	video_name = 'av3.mp4';
+      }else if(id == 4){
+      	video_name = 'av4.mp4';
+      }else if(id == 5){
+      	video_name = 'projector.mp4';
+      }else if(id == 6){
+      	video_name = 'halloffame.mp4';
+      }else if(id == 7){
+      	video_name = 'nostalgia.mp4';
+      }
+      
+			 VideoPlayer.play(
+			 "file:///android_asset/www/video/"+video_name,
+			 {
+			 volume: 1.0, 
+			 scalingMode: VideoPlayer.SCALING_MODE.SCALE_TO_FIT
+			 },
+			 function () {
+			 },
+			 function (err) {
+			 }
+			 );
+	   }
+	  
+</script>
+
+
+<style>
+    * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
+html,body{
+    width:100%;
+    height:100%;
+    margin:0px;
+    background-color:#050b43;
+    overflow:hidden;
+    -ms-touch-action: none;
+}
+	#wrap{
+		width:100%;
+		height:100%;
+	}
+	
+	#wrap img{ 
+		height:100%;
+		width:auto;
+	}
+	
+	#ajax-loader{
+		position: absolute;
+    	width: 100%;
+    	height: 100%;
+    	background: rgba(0, 0, 0, 0.72);
+    	z-index: 20;
+    	text-align: center;
+		display:none;
+	}
+	
+	#ajax-loader > img{
+        width:100px;
+		top: -moz-calc(50% - 50px);
+    	top: -webkit-calc(50% - 50px);
+    	top: -o-calc(50% - 50px);
+    	top: calc(50% - 50px);
+    	position: absolute;
+        margin-left: -50px;
+	}
+	
+	#box-image{
+		width: 1000px;
+		height: 600px;
+		overflow: auto;
+		margin: 0 auto;
+		top: -moz-calc(50% - 300px);
+		top: -webkit-calc(50% - 300px);
+		top: -o-calc(50% - 300px);
+		top: calc(50% - 300px);
+		position: relative;
+	}
+
+</style>
+
+<body>
+
+<div id="ajax-loader">
+	<img src="images/ajax-loader.gif" />
+</div>
+    <div id="box-image" >
+            <img src="images/panomwit-3.jpg" height="600" usemap="#planetmap">
+                <map id="planetmap" name="planetmap">
+                    <area shape="rect" alt="" title="" coords="78,122,191,153" href="#" onClick="playMP4(3);" />
+                    <area shape="rect" alt="" title="" coords="53,167,158,192" href="#" onClick="playMP4(4);" />
+                    <area shape="rect" alt="" title="" coords="132,242,291,282" href="#" onClick="changePage(2);" />
+                    <area shape="rect" alt="" title="" coords="309,80,475,124" href="#" onClick="playMP4(5);" />
+                    <area shape="rect" alt="" title="" coords="336,197,475,236" href="#" onClick="changePage(3);" />
+                    <area shape="rect" alt="" title="" coords="577,82,684,108" href="#" onClick="playMP4(1);" />
+                    <area shape="rect" alt="" title="" coords="619,119,728,147" href="#" onClick="playMP4(2);" />
+                    <area shape="rect" alt="" title="" coords="629,162,806,196" href="#" onClick="changePage(1);" />
+                    <area shape="rect" alt="" title="" coords="2642,142,2804,180" href="#" onClick="playMP4(6);" />
+                    <area shape="rect" alt="" title="" coords="3387,146,3591,184" href="#" onClick="changePage(4);" />
+                    <area shape="rect" alt="" title="" coords="3439,281,3599,319" href="#" onClick="playMP4(7);" />
+                </map>
+        </div>
+
+</body>
+</html>

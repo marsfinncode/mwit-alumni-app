@@ -1,0 +1,192 @@
+function startEffect2() {
+    window.interval[1] = setInterval(runEffect2, window.SPEED_EFFECT);
+}
+
+function runEffect2() {
+    var gridItem = [];
+    $('.grid-selector > .grid-item').each(function () {
+        var $selector = $(this);
+        var value = $selector.attr('data-item');
+        if (typeof value !== 'undefined'
+            && !$selector.hasClass('0overlaps')) {
+            gridItem.push(value);
+        }
+    });
+
+    if (gridItem.length === 0) {
+        if (typeof window.grid !== 'undefined') {
+            window.grid();
+        }
+        return;
+    }
+
+    var limit = window.MAXIMUM_GRID_EFFECT;
+    var shuffle = _.shuffle(gridItem, limit);
+    if (typeof shuffle !== 'undefined') {
+        shuffle = shuffle.splice(0, limit);
+        $('.grid-selector > .grid-item').each(function () {
+            var $selector = $(this);
+            var unique = $selector.attr('data-item');
+            if ($.inArray(unique, shuffle) !== -1) {
+                $selector.removeClass('magictime')
+                    .removeClass('swashIn')
+                    .removeClass('tinUpOut')
+                    .removeClass('tinRightOut')
+                    .removeClass('tinDownOut')
+                    .removeClass('tinLeftOut')
+                    .removeClass('tinUpIn')
+                    .removeClass('tinRightIn')
+                    .removeClass('tinDownIn')
+                    .removeClass('tinLeftIn')
+                    .removeClass('spaceOutUp')
+                    .removeClass('spaceOutRight')
+                    .removeClass('spaceOutDown')
+                    .removeClass('spaceOutLeft')
+                    .removeClass('spaceInUp')
+                    .removeClass('spaceInRight')
+                    .removeClass('spaceInDown')
+                    .removeClass('spaceInLeft')
+                    .removeClass('vanishIn')
+                    .removeClass('vanishOut')
+                    .removeClass('animated')
+                    .removeClass('flipOutY')
+                    .removeClass('flipInY')
+                ;
+
+                var RANDOM_ANGLE_EFFECT = Math.ceil(Math.random() * 4);
+                if (typeof window.STOP_EFFECT !== 'undefined' && window.STOP_EFFECT === true) {
+                    RANDOM_ANGLE_EFFECT = -1;
+                }
+
+                switch (RANDOM_ANGLE_EFFECT) {
+                    case -1:
+                        // SKIP
+                        break;
+                    default:
+                    case 1:
+                        $selector.addClass('magictime spaceOutUp');
+                        var getScreen = $selector.data('screen');
+                        var getTop = $selector.attr('data-real-top');
+                        var getLeft = $selector.attr('data-real-left');
+                        window.preload.push({
+                            screen: getScreen,
+                            top: getTop,
+                            left: getLeft
+                        });
+
+                        setTimeout(function () {
+                            loadByEffectM(1, 'hidden', -1, function () {
+                                var $el = $('[data-pos-class="pos' + getLeft + 'Y' + getTop + '"]');
+                                if (typeof $el.val() !== 'undefined') {
+                                    $el.removeClass('hidden')
+                                        .removeClass('magictime spaceOutUp')
+                                        .addClass('magictime spaceInUp');
+
+                                    $selector.remove();
+                                }
+                            });
+                        }, 2000);
+                        break;
+                    case 2:
+                        $selector.addClass('magictime spaceOutRight');
+                        var getScreen = $selector.data('screen');
+                        var getTop = $selector.attr('data-real-top');
+                        var getLeft = $selector.attr('data-real-left');
+                        window.preload.push({
+                            screen: getScreen,
+                            top: getTop,
+                            left: getLeft
+                        });
+
+                        setTimeout(function () {
+                            loadByEffectM(1, 'hidden', -1, function () {
+                                var $el = $('[data-pos-class="pos' + getLeft + 'Y' + getTop + '"]');
+                                if (typeof $el.val() !== 'undefined') {
+                                    $el.removeClass('hidden')
+                                        .removeClass('magictime spaceOutRight')
+                                        .addClass('magictime spaceInRight');
+
+                                    $selector.remove();
+                                }
+                            });
+                        }, 2000);
+                        break;
+                    case 3:
+                        $selector.addClass('magictime spaceOutDown');
+                        var getScreen = $selector.data('screen');
+                        var getTop = $selector.attr('data-real-top');
+                        var getLeft = $selector.attr('data-real-left');
+                        window.preload.push({
+                            screen: getScreen,
+                            top: getTop,
+                            left: getLeft
+                        });
+
+                        setTimeout(function () {
+                            loadByEffectM(1, 'hidden', -1, function () {
+                                var $el = $('[data-pos-class="pos' + getLeft + 'Y' + getTop + '"]');
+                                if (typeof $el.val() !== 'undefined') {
+                                    $el.removeClass('hidden')
+                                        .removeClass('magictime spaceOutDown')
+                                        .addClass('magictime spaceInDown');
+
+                                    $selector.remove();
+                                }
+                            });
+                        }, 2000);
+                        break;
+                    case 4:
+                        $selector.addClass('magictime spaceOutLeft');
+                        var getScreen = $selector.data('screen');
+                        var getTop = $selector.attr('data-real-top');
+                        var getLeft = $selector.attr('data-real-left');
+                        window.preload.push({
+                            screen: getScreen,
+                            top: getTop,
+                            left: getLeft
+                        });
+
+                        setTimeout(function () {
+                            loadByEffectM(1, 'hidden', -1, function () {
+                                var $el = $('[data-pos-class="pos' + getLeft + 'Y' + getTop + '"]');
+                                if (typeof $el.val() !== 'undefined') {
+                                    $el.removeClass('hidden')
+                                        .removeClass('magictime spaceOutLeft')
+                                        .addClass('magictime spaceInLeft');
+
+                                    $selector.remove();
+                                }
+                            });
+                        }, 2000);
+                        break;
+                }
+            }
+        });
+    }
+}
+
+function endEffect2() {
+    if (typeof window.interval !== 'undefined' && typeof window.interval[1] !== 'undefined') {
+        clearInterval(window.interval[1]);
+    }
+}
+
+
+window.GridItemFactory = function () {
+};
+
+window.makeCard = function () {
+    var screen = getScreen(left);
+    var svg = d3.select('#showcase')
+        .append('div')
+        .attr("data-id", 11111)
+        .attr("class", "imagebox imageMain ")
+        .attr("id", "imagebox-")
+        .attr("data-real-left", 15)
+        .attr("data-real-top", 15)
+        .attr("data-pos-class", '')
+        .attr('data-screen', 1)
+        .attr("style", "position:absolute; top:" + 15 + "px; left:" + 15 + "px;");
+
+    innerPhotoContent(svg, {}, 0);
+};

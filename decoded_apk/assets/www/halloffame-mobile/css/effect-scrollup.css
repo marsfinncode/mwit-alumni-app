@@ -1,0 +1,103 @@
+/* Scroll up effect */
+.imagebox.overlaps.scrollup{
+	display:block;
+}
+
+.imagebox.large, .imagebox.large svg, .imagebox.large svg image{
+	width:320px;
+	height:420px;
+}
+
+
+.imagebox.byrows.scrollup1, .imagebox.byrand.scrollup1{
+	animation-name: scrollup1;
+    animation-duration: 140s;
+    -webkit-transition-timing-function: linear; /* Safari and Chrome */
+    transition-timing-function: linear;
+}
+.imagebox.byrows.scrollup2, .imagebox.byrand.scrollup2{
+	animation-name: scrollup2;
+    animation-duration: 140s;
+    -webkit-transition-timing-function: linear; /* Safari and Chrome */
+    transition-timing-function: linear;
+}
+.imagebox.byrows.scrollup3, .imagebox.byrand.scrollup3{
+	animation-name: scrollup3;
+    animation-duration: 140s;
+    -webkit-transition-timing-function: linear; /* Safari and Chrome */
+    transition-timing-function: linear;
+}
+.imagebox.byrows.scrollup4, .imagebox.byrand.scrollup4{
+	animation-name: scrollup4;
+    animation-duration: 140s;
+    -webkit-transition-timing-function: linear; /* Safari and Chrome */
+    transition-timing-function: linear;
+}
+.imagebox.byrows.scrollup5, .imagebox.byrand.scrollup5{
+	animation-name: scrollup5;
+    animation-duration: 140s;
+    -webkit-transition-timing-function: linear; /* Safari and Chrome */
+    transition-timing-function: linear;
+}
+
+
+@keyframes scrollup1 {
+   0%    { transform: translate(0,0px); }
+   /*10%   { transform: translate(0,-300px); rotateY(0deg);	}
+   11%   { transform: translate(0,-330px); rotateY(180deg); }*/
+   100%  { transform: translate(0,-3000px); }
+}
+
+@keyframes scrollup2 {
+   0%    { transform: translate(0,0px); }
+   /*50%   { transform:  scale(1.0, 1.0);	}*/
+   100%  { transform: translate(0,-3000px); }
+}
+
+@keyframes scrollup3 {
+   0%    { transform: translate(0,0px); }
+   /*50%   { transform:  scale(1.0, 1.0);	}*/
+   100%  { transform: translate(0,-3000px); }
+}
+
+@keyframes scrollup4 {
+   0%    { transform: translate(0,0px); }
+   /*50%   { transform:  scale(1.0, 1.0);	}*/
+   100%  { transform: translate(0,-3000px); }
+}
+
+@keyframes scrollup5 {
+   0%    { transform: translate(0,0px); }
+   /*50%   { transform:  scale(1.0, 1.0);	}*/
+   100%  { transform: translate(0,-3000px); }
+}
+
+
+/*shrink effect
+ .imagebox.byrand.scrollup1.overlaps div{
+	animation-name: scrollupsm;
+	animation-duration: 10s;
+}
+.imagebox.byrand.scrollup2.overlaps div{
+	animation-name: scrollupsm;
+	animation-duration: 8s;
+}
+.imagebox.byrand.scrollup3.overlaps div{
+	animation-name: scrollupsm;
+	animation-duration: 10s;
+}
+.imagebox.byrand.scrollup4.overlaps div{
+	animation-name: scrollupsm;
+	animation-duration: 5s;
+}
+.imagebox.byrand.scrollup5.overlaps div{
+	animation-name: scrollupsm;
+	animation-duration: 7s;
+}
+
+@keyframes scrollupsm {
+   	0% { transform:  scale(1, 1);	 } 
+    50%  { transform:  scale(0.2, 0.2);	}
+    100% { transform:  scale(1, 1);	 } 
+}
+*/

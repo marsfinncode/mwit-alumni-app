@@ -1,0 +1,165 @@
+
+/* 1080 X 6 screens  [6480]  */
+@media only screen and (min-width: 6000px) {
+	body #princess{
+		width: 16.6%;
+		display:none;
+	}
+
+	body #showcase{
+		width: 100%;
+	}
+	body .ui-keyboard-button {
+		
+	}
+}
+
+
+
+/* 1080 X 5 screens [5400] */
+@media only screen and (min-width: 5000px)  and (max-width: 5999px) and (min-height: 1800px){
+	body #princess{
+		/*width: 20%;display:none;*/
+	}
+
+	body #showcase{
+		width: 100%;
+	}
+	body .ui-keyboard-button {
+		
+	}
+}
+
+
+
+/* 1080 X 4 screens [4320] */
+@media only screen and (min-width: 4000px)  and (max-width: 4999px) and (min-height: 1800px){
+	body #princess{
+		/*width: 25%;*/
+	}
+
+	body #showcase{
+		/*width: 75%;*/
+	}
+	body .ui-keyboard-button {
+		
+	}
+}
+
+/* 1080 X 3 screens [3240] */
+@media only screen and (min-width: 3000px)  and (max-width: 3999px) and (min-height: 1800px) {
+	body #princess{
+		/*width: 25%;*/
+	}
+
+	body #showcase{
+		/*width: 75%;*/
+	}
+	body .ui-keyboard-button {
+		
+	}
+}
+
+/* 1080 X 2 screens [2160] */
+@media only screen and (min-width: 2000px)  and (max-width: 2999px) and (min-height: 1800px){
+	body #princess{
+		/*width: 25%;*/
+	}
+
+	body #showcase{
+		/*width: 75%;*/
+	}
+	body .ui-keyboard-button {
+		
+	}
+}
+
+
+
+
+/* 1920 X 2 screens [3840] */
+@media only screen and (min-width: 1921px)  and (max-width: 3999px) and (max-height: 1200px){
+	body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .ui-widget button {
+		font-size: 0.8em;
+	}
+	body .ui-keyboard-button {
+		min-width: 1em;
+		margin: .1em;
+		line-height: 0.8em;
+		-moz-user-focus: ignore;
+	}
+}
+
+/* 1920 X 1080 */
+@media only screen and (min-width: 1800px)  and (max-width: 1920px) and (max-height: 1200px){
+	body #princess{
+		/*width: 33%;*/
+		display:none;
+	}
+
+	body #showcase{
+		/*width: 66%;*/
+		width: 100%;
+	}
+	body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .ui-widget button {
+		font-size: 0.6em;
+	}
+	body .ui-keyboard-button {
+		min-width: 0.8em;
+		margin: .1em;
+		line-height: 0.6em;
+		-moz-user-focus: ignore;
+	}
+}
+
+/* laptop */
+@media only screen and (min-width: 1300px)  and (max-width: 1800px) and (max-height: 1200px){
+	body #princess{
+		/*width: 33%;*/
+		display:none;
+	}
+
+	body #showcase{
+		/*width: 66%;*/
+		width: 100%;
+	}
+	body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .ui-widget button {
+		font-size: 0.6em;
+	}
+	body .ui-keyboard-button {
+		min-width: 0.8em;
+		margin: .1em;
+		line-height: 0.6em;
+		-moz-user-focus: ignore;
+	}
+}
+
+
+/* Tablet */
+@media only screen and (min-width: 1024px)  and (max-width: 1299px) and (max-height: 1200px){
+	body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .ui-widget button {
+		font-size: 0.6em;
+	}
+	body .ui-keyboard-button {
+		min-width: 0.8em;
+		margin: .1em;
+		line-height: 0.6em;
+		-moz-user-focus: ignore;
+	}
+}
+
+
+/* Mobile */
+@media only screen and (max-width: 1023px) and (max-height: 1200px){
+	body .ui-widget input, body .ui-widget select, body .ui-widget textarea, body .ui-widget button {
+		font-size: 0.6em;
+	}
+	body .ui-keyboard-button {
+		min-width: 0.8em;
+		margin: .1em;
+		line-height: 0.6em;
+		-moz-user-focus: ignore;
+	}
+}
+
+

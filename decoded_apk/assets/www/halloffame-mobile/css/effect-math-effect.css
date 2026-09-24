@@ -1,0 +1,43 @@
+/* Scroll up effect */
+.imagebox.overlaps.mathEffect {
+    display: block;
+}
+
+.imagebox.byrand.mathEffect1 {
+    animation-name: foolishIn;
+    animation-duration: 5s;
+}
+
+.imagebox.byrand.mathEffect2 {
+    animation-name: foolishIn;
+    animation-duration: 5s;
+}
+
+.imagebox.byrand.mathEffect3 {
+    animation-name: foolishIn;
+    animation-duration: 5s;
+}
+
+.imagebox.byrand.mathEffect4 {
+    animation-name: foolishIn;
+    animation-duration: 5s;
+}
+
+.imagebox.byrand.mathEffect5 {
+    animation-name: foolishIn;
+    animation-duration: 5s;
+}
+
+@keyframes foolishIn {
+    0% {
+        opacity: 0;
+        transform-origin: 50% 50%;
+        transform: scale(0, 0) rotate(360deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform-origin: 50% 50%;
+        transform: scale(1, 1) rotate(0deg);
+    }
+}

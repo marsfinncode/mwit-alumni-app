@@ -1,0 +1,63 @@
+/* Zoom effect */
+
+.imagebox.byrows.zoom1, .imagebox.byrand.zoom1{
+	animation-name: zoom1;
+    animation-duration: 12s;
+}
+.imagebox.byrows.zoom2, .imagebox.byrand.zoom2{
+	animation-name: zoom2;
+    animation-duration: 8s;
+}
+.imagebox.byrows.zoom3, .imagebox.byrand.zoom3{
+	animation-name: zoom3;
+    animation-duration: 5s;
+}
+.imagebox.byrows.zoom4, .imagebox.byrand.zoom4{
+	animation-name: zoom4;
+    animation-duration: 10s;
+}
+.imagebox.byrows.zoom5, .imagebox.byrand.zoom5{
+	animation-name: zoom5;
+    animation-duration: 15s;
+}
+.imagebox.byrows.zoomtest, .imagebox.byrand.zoomtest{
+	animation-name: zoomtest;
+    animation-duration: 15s;
+}
+
+@keyframes zoom1 {
+   0%    { transform: scale(0.1, 0.1);  		z-index: 2;}
+   90%   { opacity: 1;}
+   100%  { transform: scale(0.6, 0.6 ); 		z-index:60;	opacity:0;}
+}
+
+@keyframes zoom2 {
+    0%   { transform: scale(0.3, 0.3);  		z-index: 3;}
+    90%   { opacity: 1;}
+    100% { transform: scale(1.0, 1.0 ); 		z-index:100;	opacity:0;}
+}
+
+@keyframes zoom3 {
+    0%   { transform: scale(0.1, 0.1);  		z-index: 1;}
+    90%   { opacity: 1;}
+    100% { transform: scale(0.9, 0.9 ); 		z-index:90;	opacity:0;}
+}
+
+@keyframes zoom4 {
+    0%   { transform: scale(0.3, 0.3);  		z-index: 3;}
+    90%   { opacity: 1;}
+    100% { transform: scale(0.7, 0.7 ); 		z-index:70;	opacity:0;}
+}
+
+@keyframes zoom5 {
+    0%   { transform: scale(0.4, 0.4); 			z-index: 4;}
+    90%   { opacity: 1;}
+    100% { transform: scale(0.8, 0.8 ); 		z-index:80;	opacity:0;}
+}
+
+@keyframes zoomtest {
+    0%   { transform: scale(0.4, 0.4); 			}
+
+    100% { transform: scale(0.8, 0.8 ); 		}
+}
+

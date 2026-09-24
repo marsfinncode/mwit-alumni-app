@@ -1,0 +1,468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="user-scalable=0" />
+<title>Untitled Document</title>
+</head>
+
+<body>
+	<link rel="stylesheet" href="css/reset.css">
+	<link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/animate.css">
+
+	<style>
+		body{
+			background-color:#050b43;
+		}
+	
+		.list{
+			margin-top: 25px;
+		}
+		
+		.list ul{
+		}
+		
+		.list ul li{
+			width: 80%;
+			padding: 20px;
+			margin-left: 10%;
+			text-align: center;
+			background: rgba(0, 0, 0, 0.75);
+			margin-bottom: 25px;
+			font-size: 35px;
+		}
+		
+		#logo-box{
+			text-align:center;
+		}
+		
+		#logo-box > img{
+			max-width:90%;
+		}
+		
+		.content-box{
+			display:none;
+			width: 80%;
+			padding: 20px;
+			margin-left: 10%;
+			background: rgba(0, 0, 0, 0.57);
+			margin-bottom: 25px;
+			padding-top: 1px;
+			position: relative;
+		}
+		
+		.content-box > h2{
+			font-size: 25px;
+    		color: #fff;
+    		margin-bottom: 12px;
+    		margin-top: 25px;
+		}
+		
+		.content-box > .detail-box{
+			color: #BBB;
+    		font-size: 20px;
+		}
+		
+		.content-box > .detail-box > video{
+			width: 100%;
+    		height: auto;
+    		aspect-ratio: 16 / 9;
+    		background: #000;
+    		margin: 20px 0px;
+		}
+		
+		.content-box > .detail-box > hr {
+			border-top: 1px solid rgba(255, 255, 255, 0.47);
+		}
+		
+		.content-box .icon-back{
+			position: absolute;
+			right: 10px;
+			top: 10px;
+		}
+		
+		#back-home{
+			position: absolute;
+			top: 15px;
+			height: 30px;
+			left: 1%;
+			z-index:500;
+		}
+		
+		#icon-th{
+			position: absolute;
+			right: 80px;
+			top: 20px;
+		}
+		
+		#icon-en{
+			position: absolute;
+			right: 10px;
+			top: 20px;
+		}
+		
+		#list-box-EN{
+			display:none;
+		}
+	</style>
+    
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    
+    <script>
+	
+		var lang = 'TH';
+		var pageNow = 'list';
+		
+		
+		function setLang(l){
+			lang = l;
+			if(pageNow == 'list'){
+				$(".content-box").hide();
+				$(".list").hide();
+				$("#list-box-"+lang).fadeIn(400);
+			}else{
+				$(".content-box").hide();
+				openContent(pageNow);
+			}
+		}
+	
+		function openContent(id){
+			pageNow = id;
+			$(".list").hide();
+			$("#content-"+id+"-"+lang).fadeIn(400);
+            $("#video_"+id).get(0).play();
+		}
+		
+		function backToList(){
+			pageNow = 'list';
+			$(".content-box").hide();
+			$("#list-box-"+lang).fadeIn(400);
+		}
+	</script>
+    
+    <a href="../index-2.html"><img src="images/back-home.png" id="back-home" /></a>
+    
+    <div id="logo-box">
+    	<img src="images/logo.png" />
+		<img id="icon-th" onClick="setLang('TH');" src="images/th-50.png" />
+		<img id="icon-en" onClick="setLang('EN');" src="images/uk-50.png" />
+    </div>
+	
+	<div id="list-box-TH" class="list">
+    	<ul>
+        	<li class="animated zoomIn" onClick="openContent(1,'TH');">อาคารมหิดลวิทยานุสรณ์ 1</li>
+            <li class="animated zoomIn" onClick="openContent(2,'TH');">อาคารมหิดลวิทยานุสรณ์ 2</li>
+            <li class="animated zoomIn" onClick="openContent(3,'TH');">อาคารมหิดลวิทยานุสรณ์ 3</li>
+            <li class="animated zoomIn" onClick="openContent(4,'TH');">โรงอาหารและหอประชม<br />พระอุบาลีคุณูปมาจารย์</li>
+            <li class="animated zoomIn" onClick="openContent(5,'TH');">ศูนย์กีฬา</li>
+            <li class="animated zoomIn" onClick="openContent(6,'TH');">หอพักนักเรียนหญิง</li>
+            <li class="animated zoomIn" onClick="openContent(7,'TH');">หอพักนักเรียน</li>
+            <li class="animated zoomIn" onClick="openContent(8,'TH');">อาคารรับรอง</li>
+            <li class="animated zoomIn" onClick="openContent(9,'TH');">โรงฝึกงาน</li>
+            <li class="animated zoomIn" onClick="openContent(10,'TH');">ศูนย์วิทยบริการ</li>
+        </ul>
+    </div>
+	
+	<div id="list-box-EN" class="list">
+    	<ul>
+        	<li class="animated zoomIn" onClick="openContent(1,'EN');">Mahidol Wittayanusorn 1</li>
+            <li class="animated zoomIn" onClick="openContent(2,'EN');">Mahidol Wittayanusorn 2</li>
+            <li class="animated zoomIn" onClick="openContent(3,'EN');">Mahidol Wittayanusorn 3</li>
+            <li class="animated zoomIn" onClick="openContent(4,'EN');">Cafeteria and Upali Kunupamacarya Auditorium</li>
+            <li class="animated zoomIn" onClick="openContent(5,'EN');">Sport Center</li>
+            <li class="animated zoomIn" onClick="openContent(6,'EN');">Girl Dormitory</li>
+            <li class="animated zoomIn" onClick="openContent(7,'EN');">Boy Dormitory</li>
+            <li class="animated zoomIn" onClick="openContent(8,'EN');">Guest House</li>
+            <li class="animated zoomIn" onClick="openContent(9,'EN');">Laboratory of Plant Physiology and Workshop</li>
+            <li class="animated zoomIn" onClick="openContent(10,'EN');">Academic Resource Center</li>
+        </ul>
+    </div>
+    
+    <div id="content-1-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>อาคารมหิดลวิทยานุสรณ์ 1</h2>
+        <div class="detail-box">
+        	<video controls autoplay id="video_1" poster="poster/p_1.png" >
+                <source src="videos/video_1.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>อาคารมหิดลวิทยานุสรณ์ 1</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>MAHIDOL WITTAYANUSORN 1</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp;ที่ตั้งของห้องปฎิบัติการศิลปะ ที่พร้อมด้วยอุปกรณ์และวัสดุสร้างสรรค์งานศิลปะและงานฝีมือตามจินตนาการ&nbsp; เพื่อการคิดอย่างสร้างสรรค์&nbsp; ห้องสาขาวิชาวิทยาการคอมพิวเตอร์ คณิตศาสตร์ สังคมศึกษาและศิลปะ ภาษาไทย และภาษาต่างประเทศ</p>
+        </div>
+    </div>
+	
+	<div id="content-1-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Mahidol Wittayanusorn 1</h2>
+        <div class="detail-box">
+            <video controls id="video_1" poster="poster/p_1.png" >
+                <source src="videos/video_1.mp4" type="video/mp4">
+                    </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Mahidol Wittayanusorn 1</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp;Mahidol Wittayanusorn 1 located art studio, equipped with tools and equipment, as a place for student to express their own imagination and enhance creativity. Department of computer science, mathematics, social studies, arts, Thai, and foreign languages are also located here.
+</p>
+        </div>
+    </div>
+	
+    
+    <div id="content-2-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>อาคารมหิดลวิทยานุสรณ์ 2</h2>
+        <div class="detail-box">
+        	<video controls id="video_2" poster="poster/p_2.png" >
+            	<source src="videos/video_2.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>อาคารมหิดลวิทยานุสรณ์ 2&nbsp;</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>MAHIDOL WITTAYANUSORN 2</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ที่ตั้งของห้องเรียนอัจฉริยะ (SMART CLASS ROOM) ที่พร้อมด้วยอุปกรณ์และเทคโนโลยีที่ทันสมัย ถ่ายทอดสดและบันทึกการเรียนด้วยระบบเสียงดิจิตอล สามารถเชื่อมต่อและเข้าชมการเรียนย้อนหลังได้ตลอดเวลา และห้องสาขาวิชาฟิสิกส์ ตลอดจนห้องวิจัยทางแสง(QUANTUM LAB) พร้อมอุปกรณ์เครื่องมือที่ได้มาตรฐานห้องวิจัยระดับประเทศ&nbsp; สำหรับทำงานวิจัยและโครงงานเกี่ยวแสง</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-2-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Mahidol Wittayanusorn 2</h2>
+        <div class="detail-box">
+            <video controls id="video_2" poster="poster/p_2.png" >
+                <source src="videos/video_2.mp4" type="video/mp4">
+                    </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Mahidol Wittayanusorn 2</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;Mahidol Wittayanusorn 2 location of smart classrooms, equipped with cutting-edge teaching media and live braodcasting and recording system, in which students can access through the courses at any time they want, and department of physics, light laboratory (quantum laboratory) for researches and projects related to light and optics.</p>
+        </div>
+    </div>
+	
+    
+    <div id="content-3-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>อาคารมหิดลวิทยานุสรณ์ 3</h2>
+        <div class="detail-box">
+        	<video controls autoplay id="video_3" poster="poster/p_3.png" >
+                <source src="videos/video_3.mp4" type="video/mp4">
+                    </video>
+            <p style="font-size: 28px; text-align: center;"><strong>อาคารมหิดลวิทยานุสรณ์ 3</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>MAHIDOL WITTAYANUSORN 3</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp; ที่ตั้งของห้องสาขาวิชาชีววิทยา และเคมี ห้องเรียนและห้องปฏิบัติการเฉพาะสาขาวิชา ที่มีอุปกรณ์ทันสมัยได้มาตรฐานระดับนานาชาติ &nbsp;สำหรับการเรียนการสอน ค้นคว้า ทดลอง และฝึกปฏิบัติงานทางเทคนิคเฉพาะทาง ประกอบด้วย ห้องเพาะเลี้ยงเนื้อเยื่อ ห้องปฏิบัติการวิชาชีววิทยา ห้องปฏิบัติการเคมี และห้องเรียนดาราศาสตร์</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-3-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Mahidol Wittayanusorn 3</h2>
+        <div class="detail-box">
+            <video controls id="video_3" poster="poster/p_3.png" >
+                <source src="videos/video_3.mp4" type="video/mp4">
+                    </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Mahidol Wittayanusorn 3</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp; Mahidol Wittayanusorn 3 Department of  biology and chemistry locate here, alotogether with the departments' classroom and laboratory fully equipped with apparatus and equipment for education and specialized researches, including tissue culture laboratory, biology laboratory, chemistry laboratory, and astronomy laboratory.</p>
+        </div>
+    </div>
+    
+    
+    <div id="content-4-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>โรงอาหาร</h2>
+        <div class="detail-box">
+        	<video controls id="video_4" poster="poster/p_5.png" >
+            	<source src="videos/video_5.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>&nbsp; โรงอาหาร </strong><strong>CAFETERIA</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; ดูแลจัดการโภชนาการและอาหารที่ดีมีคุณภาพตามระบบ GMP ของ INTERTEK และได้มาตรฐานของสถาบันอาหาร กระทรวงอุตสาหกรรม</p>
+            <p>&nbsp;</p>
+            <p style="font-size: 28px; text-align: center;"><strong>หอประชุมพระอุบาลีคุณูปมาจารย์ &nbsp;</strong><strong>AUDITORIUM </strong>&nbsp;&nbsp;</p>
+            <p style="font-size: 18px; text-align: center;">&nbsp;รองรับผู้เข้าร่วมประชุมได้ประมาณ 1,000 คน &nbsp;&nbsp;</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-4-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Cafeteria and Upali Kunupamacarya Auditorium</h2>
+        <div class="detail-box">
+        	<video controls id="video_4" poster="poster/p_5.png" poster="poster/p_5.png" >
+            	<source src="videos/video_5.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Cafeteria </strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; provides healthy foods and maintains nutritions by implementing INTERTEK GMP standards, certified by National Food Institute, Ministry of Industry</p>
+            <p>&nbsp;</p>
+            <p style="font-size: 18px; text-align: center;">&nbsp;Upali Kunupamacarya Auditorium with maximum capacity around 1,000 seats&nbsp;&nbsp;</p>
+        </div>
+    </div>
+	
+    
+    <div id="content-5-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>ศูนย์กีฬา</h2>
+        <div class="detail-box">
+        	<video controls id="video_5" poster="poster/p_6.png" >
+            	<source src="videos/video_6.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>ศูนย์กีฬา</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>SPORT CENTER</strong></p>
+            <p style="font-size: 18px; text-align: justify;"><strong>&nbsp; &nbsp; &nbsp; &nbsp; &ldquo;สุขภาพที่ดี ร่างกายที่แข็งแรง นำไปสู่การเรียนรู้ที่ดี&rdquo;</strong> พร้อมด้วยสถานที่ อุปกรณ์ และสิ่งอำนวยความสะดวกสำหรับออกกำลังกายหลากหลายประเภท อาทิ แบดมินตัน ปิงปองบาสเกตบอล ฯลฯ และอุปกรณ์ออกกำลังกายที่ได้มาตรฐาน ตลอดจนสระว่ายน้ำ และใช้เป็นห้องเรียนสาขาวิชาพลานามัย</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-5-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Sport Center</h2>
+        <div class="detail-box">
+        	<video controls id="video_5" poster="poster/p_6.png" poster="poster/p_6.png"  >
+            	<source src="videos/video_6.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Sport Center</strong></p>
+            <p style="font-size: 18px; text-align: justify;"><strong>&nbsp; &nbsp; &nbsp; &nbsp; &ldquo;Healthy living means better study life&rdquo;</strong> , equipped with instruments and spaces for various kinds of activities, such as courts for table tennis, badminton, basketball, swimming pools, exercise equipment. The place is also used for PE class.</p>
+        </div>
+    </div>
+    
+    <div id="content-6-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>หอพักนักเรียนหญิง</h2>
+        <div class="detail-box">
+        	<video controls id="video_6" poster="poster/p_7.png" >
+            	<source src="videos/video_7.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>หอพักนักเรียนหญิง</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>GIRL DORMITORY</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;อาคาร 5 ชั้น &nbsp;&nbsp;แต่ละชั้นมีห้องพักสำหรับอาจารย์และนักเรียน 40 ห้อง&nbsp; พร้อมด้วยสาธารณูปโภคและสิ่งแวดล้อมที่เอื้อต่อการพักผ่อน&nbsp; และเพียงพอต่อจำนวนผู้พักอาศัย&nbsp; และพร้อมด้วยห้องดูทีวี ห้องอ่านหนังสือ</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-6-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Girl Dormitory</h2>
+        <div class="detail-box">
+        	<video controls id="video_6" poster="poster/p_7.png" poster="poster/p_7.png" >
+            	<source src="videos/video_7.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Girl Dormitory</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;5-storey residence. Each floor has 40 units for students and teachers. The The residence is fully equipped with services and facilities, common room with TV, and study room, with warm and relaxed atmosphere.</p>
+        </div>
+    </div>
+    
+    <div id="content-7-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>หอพักนักเรียนชาย</h2>
+        <div class="detail-box">
+        	<video controls id="video_7" poster="poster/p_9.png" >
+            	<source src="videos/video_9.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>หอพักนักเรียนชาย</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>BOY DORMITORY</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;อาคาร 9 ชั้น &nbsp;ชั้นที่ 3 ถึง 7 เป็นห้องพักนักเรียน&nbsp; มีห้องพักนักเรียน 120&nbsp; ห้อง&nbsp; นักเรียนพักห้องละ 4 คน และพร้อมด้วยสาธารณูปโภคและสิ่งแวดล้อมที่เอื้อต่อการพักผ่อน&nbsp; และรองรับได้เพียงพอต่อจำนวนผู้พักอาศัย และพร้อมด้วยห้องดูทีวี ห้องอ่านหนังสือ</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-7-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Boy Dormitory</h2>
+        <div class="detail-box">
+        	<video controls id="video_7" poster="poster/p_9.png" poster="poster/p_9.png"  >
+            	<source src="videos/video_9.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Boy Dormitory</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;9-storey, 120-unit on campus residence for students. Rooms are located on 3rd-7th floors. A room can allocate up to four students. The residence is fully equipped with services and facilities , common room with TV, and study room with warm and relaxed atmosphere.</p>
+        </div>
+    </div>
+	
+    
+    <div id="content-8-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>อาคารรับรอง</h2>
+        <div class="detail-box">
+        	<video controls id="video_8" poster="poster/p_14.png" >
+            	<source src="videos/video_14.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>อาคารรับรอง</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>GUEST HOUSE</strong></p>
+            <p style="font-size: 18px; text-align: left;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; อาคารที่พักสำหรับผู้มาเยือนหรือผู้เข้าร่วมกิจกรรมที่โรงเรียนจัดขึ้น พร้อมด้วยสาธารณูปโภคและสิ่งอำนวยความสะดวกต่างๆ</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-8-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Guest House</h2>
+        <div class="detail-box">
+        	<video controls id="video_8" poster="poster/p_14.png" poster="poster/p_14.png" >
+            	<source src="videos/video_14.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Guest House</strong></p>
+            <p style="font-size: 18px; text-align: left;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Guest house an acommodation for visitors or participants in school's activities, co,plemented with utility services and facilities.</p>
+        </div>
+    </div>
+	
+	
+    
+    <div id="content-9-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>ห้องสรีรวิทยา และโรงฝึกงาน</h2>
+        <div class="detail-box">
+        	<video controls id="video_9" poster="poster/p_15.png" poster="poster/p_15.png" >
+            	<source src="videos/video_15.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>ห้องปฏิบัติการทางสรีรวิทยาของพืช</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>LABORATORY OF PLANT PHYSIOLOGY&nbsp;</strong></p>
+            <p style="font-size: 18px; text-align: left;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;พร้อมด้วยอุปกรณ์ เช่น เครื่อง GROWES CHAMBER, SPECTROPHOTOMETER, CENTRIFUTE เป็นต้น สำหรับทำงานวิจัยและโครงงานด้านสรีรวิทยาของพืช เช่น ข้าว&nbsp; และใช้เป็นห้องเรียนวิชาชีววิทยา</p>
+            <p style="text-align: justify;">&nbsp;</p>
+            <p style="font-size: 28px; text-align: center;"><strong>โรงฝึกงาน</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>WORK SHOP</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; เครื่องมือและอุปกรณ์งานช่างที่พร้อมกับการสร้างนวัตกรรมและเสริมสร้างประสบการณ์ปฏิบัติงาน ประกอบด้วย ห้องปฏิบัติการไฟฟ้าอิเล็กทรอนิกส์ &amp; คอมพิวเตอร์ ห้องปฏิบัติการเขียนแบบ ห้องปฏิบัติการช่างกลโรงงาน และห้องปฏิบัติการเครื่องปั้นดินเผา&nbsp; และใช้เป็นห้องเรียนวิชาฟิสิกส์</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-9-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Laboratory of Plant Physiology and Workshop</h2>
+        <div class="detail-box">
+        	<video controls id="video_9" poster="poster/p_15.png" poster="poster/p_15.png" >
+            	<source src="videos/video_15.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Laboratory of plant physiology</strong></p>
+            <p style="font-size: 18px; text-align: left;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;equipped with growth chamber, spectrophotometer, centrifuge, etc., is used as a research laboratory in plant physiology, especially researches in rice, and as a biology classroom.</p>
+            <p style="text-align: justify;">&nbsp;</p>
+            <p style="font-size: 28px; text-align: center;"><strong>Workshop</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; equipped with mechanical tools and instruments, includes electric & electronic laboratory, computer laboratory, drafting room, industrial workshop, and pottery studio. The place is also used for courses in physics.</p>
+        </div>
+    </div>
+    
+    <div id="content-10-TH" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>ศูนย์วิทยบริการ</h2>
+        <div class="detail-box">
+        	<video controls id="video_10" poster="poster/p_16.png" >
+            	<source src="videos/video_16.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>ศูนย์วิทยบริการ</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>ACADEMIC RESOURCE CENTER</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; แหล่งวิทยาการที่มีสื่อความรู้หลากหลายรูปแบบครบถ้วนทุกสาขาวิชา จัดบริการสนับสนุนและส่งเสริมการศึกษา เรียนรู้ การค้นคว้าวิจัย พร้อมระบบเครือข่ายอินเตอร์เน็ตความเร็วสูง เพื่อการเรียนรู้และเข้าถึงข้อมูลได้รวดเร็วฉับไว&nbsp;</p>
+            <p>&nbsp;</p>
+            <p style="font-size: 28px; text-align: center;"><strong>ห้องฉายภาพเสมือนจริงดาราศาสตร์ 3 มิติ</strong></p>
+            <p style="font-size: 28px; text-align: center;"><strong>MWITS-SWINBURNE Virtual Reality Theatre</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp;ฉายภาพยนตร์ด้วยระบบดิจิตอลทั้งภาพและเสียง จัดตั้งขึ้นจากความร่วมมือกับ The Centre for Astrophysics &amp; Supercomputing, Swinburne University of Technology, Australia เพื่อใช้เป็นสื่อการเรียนการสอนดาราศาสตร์ที่จะช่วยจุดประกาย เสริมสร้างจินตนาการให้เกิดความสนใจศึกษาและค้นคว้าทางด้านวิทยาศาสตร์และเทคโนโลยีมากขึ้น</p>
+        </div>
+    </div>
+	
+	
+	<div id="content-10-EN" class="content-box">
+    	<img src="images/back-icon.png" class="icon-back" onclick="backToList();" />
+    	<h2>Academic Resource Center</h2>
+        <div class="detail-box">
+        	<video controls id="video_10" poster="poster/p_16.png" poster="poster/p_16.png" >
+            	<source src="videos/video_16.mp4" type="video/mp4">
+            </video>
+            <p style="font-size: 28px; text-align: center;"><strong>Academic Resource Center</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; provides a variety of academic support services to the school with high-speed internet for educational and research purpose.</p>
+            <p>&nbsp;</p>
+            <p style="font-size: 28px; text-align: center;"><strong>MWITS-Swinburne Virtual Reality Theatre</strong></p>
+            <p style="font-size: 18px; text-align: justify;">&nbsp; &nbsp; &nbsp; &nbsp;Established under the cooperation with the Center for Astrophysics and Supercomputing, Swinburne University of Technology, Australia, is functioned as teaching materials for courses in astronomy,stimulating imagination and inspiring a new generations of astronomers students.</p>
+        </div>
+    </div>
+
+</body>
+</html>

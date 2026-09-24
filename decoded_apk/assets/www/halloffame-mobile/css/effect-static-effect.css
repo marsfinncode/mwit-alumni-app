@@ -1,0 +1,85 @@
+/* Scroll up effect */
+.imagebox.overlaps.staticEffect {
+    display: block;
+}
+
+.imagebox.byrand.staticEffect1 {
+    animation-name: openDownLeftRetourn;
+    animation-duration: 5s;
+}
+
+.imagebox.byrand.staticEffect2 {
+    animation-name: openDownRightRetourn;
+    animation-duration: 5s;
+}
+
+.imagebox.byrand.staticEffect3 {
+    animation-name: openUpLeftRetourn;
+    animation-duration: 5s;
+}
+
+.imagebox.byrand.staticEffect4 {
+    animation-name: openUpRightRetourn;
+    animation-duration: 5s;
+}
+
+.imagebox.byrand.staticEffect5 {
+    animation-name: openDownLeftRetourn;
+    animation-duration: 5s;
+}
+
+@keyframes openDownLeftRetourn {
+    0% {
+        transform-origin: bottom left;
+        transform: rotate(-110deg);
+        animation-timing-function: ease-in-out;
+    }
+
+    100% {
+        transform-origin: bottom left;
+        transform: rotate(0deg);
+        animation-timing-function: ease-out;
+    }
+}
+
+@keyframes openDownRightRetourn {
+    0% {
+        transform-origin: bottom right;
+        transform: rotate(110deg);
+        animation-timing-function: ease-in-out;
+    }
+
+    100% {
+        transform-origin: bottom right;
+        transform: rotate(0deg);
+        animation-timing-function: ease-out;
+    }
+}
+
+@keyframes openUpLeftRetourn {
+    0% {
+        transform-origin: top left;
+        transform: rotate(110deg);
+        animation-timing-function: ease-in-out;
+    }
+
+    100% {
+        transform-origin: top left;
+        transform: rotate(0deg);
+        animation-timing-function: ease-out;
+    }
+}
+
+@keyframes openUpRightRetourn {
+    0% {
+        transform-origin: top right;
+        transform: rotate(-110deg);
+        animation-timing-function: ease-in-out;
+    }
+
+    100% {
+        transform-origin: top right;
+        transform: rotate(0deg);
+        animation-timing-function: ease-out;
+    }
+}
