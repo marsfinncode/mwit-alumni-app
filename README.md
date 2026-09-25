@@ -27,5 +27,13 @@ If you wish to build the APK yourself from this source:
 I want to thank you Aj.Komkrit Soontra, professional student affair staff, for this valuable resource.
 
 Thank You for interested in this project.
+
 Pakorn Wongaroon. Vice President of MWIT Student Council 34.
+
 Former Vice President of MWIT Dormitory Student Committee 34.
+
+เนื่องจากเป็นแอปที่ได้รับจากอ.คมกริช สุนทรา ครูหอพักชำนาญการ ซึ่งกระผมรู้สึกควรค่าแก่การเก็บไว้สำหรับศึกษา จึงนำมาเผยแพร่ลง GitHub ให้นักเรียนโรงเรียนมหิดลวิทยานุสรณ์ที่สนใจ ได้ดาวน์โหลดและนำไปพัฒนาต่อ
+
+หากเกิดข้อผิดพลาดประการใด สามารถติดต่อได้
+ภากร วงษ์อรุณ รองประธานนักเรียนโรงเรียนมหิดลวิทยานุสรณ์ รุ่น 34
+อดีตรองประธานหอพักชาย
